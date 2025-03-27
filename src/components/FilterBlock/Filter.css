@@ -1,0 +1,8 @@
+.filter{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: auto;
+    padding: 110px 100px;
+    background-color: var(--color-header);
+}

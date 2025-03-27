@@ -1,9 +1,8 @@
 .header{
     display: flex;
-    width: 100%;
     justify-content: space-between;
     align-items: center;
-    padding: 20px 50px;
+    padding: 20px 100px;
     background-color: var(--color-header);
 }
 
@@ -11,7 +10,6 @@ nav{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    margin-right: 100px;
     user-select: none;
 }
 
@@ -21,6 +19,7 @@ ul{
     gap: 20px;
     font-size: var(--font-size-header);
     font-family: var(--font-header);
+    padding-inline-start: 0px;
 }
 .active{
     color: white !important;

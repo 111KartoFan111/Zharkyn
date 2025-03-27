@@ -1,9 +1,13 @@
 import React from 'react'
 import Header from './Header/Header'
+import Filter from './FilterBlock/Filter'
 
 const Main = () => {
   return (
-    <Header />
+    <div className='main'>
+        <Header />
+        <Filter />
+    </div>
   )
 }
 

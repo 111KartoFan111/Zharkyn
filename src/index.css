@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
 @font-face {
   font-family: 'Core Sans AR';
   src: url('/fonts/CoreSansAR85HeavyRegular.woff2') format('woff2'),
@@ -21,6 +23,7 @@ img{
 :root{
   /* font-family */
   --font-header: 'Core Sans AR';
+  --font-dm:'DM Sans', sans-serif;
 
   /* font-size */
   --font-size-header: 20px;
