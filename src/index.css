@@ -12,6 +12,10 @@ body{
   padding: 0;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
 a{
   text-decoration: none;
   user-select: none;
