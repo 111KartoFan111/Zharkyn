@@ -38,7 +38,7 @@ const CarBrand = () => {
                 src={brand.logo}
                 alt={`${brand.name} logo`}
               />
-              <div className="BrandName">{brand.name}</div>
+              <h3 className="BrandName">{brand.name}</h3>
             </div>
         ))}
       </div>

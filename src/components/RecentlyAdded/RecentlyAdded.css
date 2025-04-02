@@ -1,14 +1,12 @@
-.FMain {
+.RMain {
     display: flex;
     height: 876.48px;
     width: 100%;
     flex-shrink: 0;
     border-radius: 16px;
-    background: #F9FBFC;
-    margin: 140px 0px;
     flex-direction: column;
 }
-.FLeft{
+.RLeft{
     display: flex;
     width: 338.552px;
     height: 40px;
@@ -18,57 +16,13 @@
     margin-left: 150px;
     margin-top: 115px;
 }
-.FLeft h2{
+.RLeft h2{
     color: #050B20;
     font-family: "DM Sans";
     font-size: 40px;
     font-style: normal;
     font-weight: 700;
     line-height: 40px;
-}
-.Flist{
-    display: flex;
-    width: 1400px;
-    height: 40.89px;
-    align-items: flex-start;
-    gap: 30px;
-    flex-shrink: 0;
-    border-bottom: 1px solid #E9E9E9;
-    margin-left: 150px;
-    margin-top: 15px;
-}
-.Ffilter{
-    display: flex;
-    width: max-content;
-    height: 39.89px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 9.3px;
-    flex-shrink: 0;
-}
-.Ffilter h3{
-    color: #050B20;
-    font-family: "DM Sans";
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 29.6px; /* 185% */
-    margin: 0;
-}
-.FfilterLine{
-    width: 60.45px;
-height: 3px;
-flex-shrink: 0;
-background: #405FF2;
-}
-.Slider{
-    display: flex;
-    width: 1430px;
-    padding: 0px 1087px 17px 15px;
-    align-items: center;
-    margin-left: 150px;
-    margin-top: 50px;
 }
 .item{
     display: flex;
@@ -114,7 +68,7 @@ background: #405FF2;
     line-height: 25.9px; /* 185% */
     text-transform: capitalize;
 }
-.FavorIcon{
+.RavorIcon{
     display: flex;
     width: 36px;
     height: 36px;
@@ -129,7 +83,7 @@ background: #405FF2;
     -ms-border-radius: 40px;
     -o-border-radius: 40px;
 }
-.filter_state{
+.Rilter_state{
     height: max-content;
     display: flex;
     justify-self: center;
