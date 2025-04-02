@@ -1,5 +1,5 @@
 import React from 'react'
-import './CarType.css'
+import '../styles/Block/CarType.css'
 
 const CarType = () => {
   return (

@@ -1,6 +1,6 @@
 import React from 'react'
 import Form from './Form'
-import './Filter.css'
+import '../styles/Block/Filter.css'
 
 const Filter = () => {
   return (

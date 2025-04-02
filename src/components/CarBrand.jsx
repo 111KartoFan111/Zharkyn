@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import './CarBrand.css'
+import '../styles/Block/CarBrand.css'
 
 const CarBrand = () => {
   const [showAllBrands] = useState(false)

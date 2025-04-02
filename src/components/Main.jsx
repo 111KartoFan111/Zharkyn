@@ -1,12 +1,15 @@
 import React from 'react'
-import Header from './Header/Header'
-import Filter from './FilterBlock/Filter'
-import CarType from './CarType/CarType'
-import CarBrand from './CarBrand/CarBrand'
-import FeaturedMain from './FeaturedListings/FeaturedMain'
-import RecentlyAdded from './RecentlyAdded/RecentlyAdded'
-import './Main.css'
-import ReviewsBlock from './ReviewsBlock/ReviewsBlock'
+import Header from './Header'
+import Filter from './Filter'
+import CarType from './CarType'
+import CarBrand from './CarBrand'
+import FeaturedMain from './FeaturedMain'
+import RecentlyAdded from './RecentlyAdded'
+import '../styles/Main.css'
+import ReviewsBlock from './ReviewsBlock'
+import CarBlog from './CarBlog'
+import AutoLoanCalculator from './AutoLoanCalculator'
+import Footer from './Footer.jsx'
 
 const Main = () => {
   return (
@@ -16,15 +19,11 @@ const Main = () => {
       <CarType />
       <CarBrand />
       <FeaturedMain />
-      <div className='UpperBut'>
-        <div className='upFlex'>
-          <a href='#' >
-            <img className='upImg' src="./img/upIMg.svg" alt="" />
-          </a>
-        </div>
-      </div>
       <RecentlyAdded/>
       <ReviewsBlock/>
+      <CarBlog/>
+      <AutoLoanCalculator />
+      <Footer/>
     </div>
   )
 }

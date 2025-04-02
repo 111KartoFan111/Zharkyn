@@ -1,0 +1,110 @@
+.auto-background {
+  display: flex;
+  background-image: url(/public/img/Background.png);
+  height: 890px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: -100px;
+  background-image: slategray;
+  margin-top: 100px;
+}
+
+.calculator-container {
+    max-width: 32rem;
+    margin: 0 auto;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    font-family: var(--font-dm);
+  }
+  
+  .calculator-title {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    font-family: var(--font-dm);
+  }
+  
+  .calculator-description {
+    color: #4B5563;
+    margin-bottom: 1.5rem;
+    
+  }
+  
+  .input-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .input-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .input-label {
+    display: block;
+    font-size: 0.875rem;
+    color: #4B5563;
+    margin-bottom: 0.5rem;
+  }
+  
+  .input-field {
+    width: 80%;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #E5E7EB;
+    border-radius: 0.5rem;
+    transition: border-color 0.2s;
+    height: 30px;
+  }
+  
+  .input-field:focus {
+    outline: none;
+    border-color: #3B82F6;
+  }
+  
+  .calculate-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #3B82F6;
+    color: white;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    font-size: medium;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+  }
+  
+  .calculate-button:hover {
+    background-color: #2563EB;
+  }
+  
+  .arrow-icon {
+    width: 1rem;
+    height: 1rem;
+  }
+  
+  .result-container {
+    margin-top: 1.5rem;
+    padding: 1rem;
+    background-color: #F9FAFB;
+    border-radius: 0.5rem;
+  }
+  
+  .result-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .result-amount {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #3B82F6;
+  }

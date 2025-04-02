@@ -1,0 +1,78 @@
+.ReviewsBlock{
+    margin-top: 100px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    border-radius: 16px;
+    height: 750px;
+    gap: 50px;
+    background: #050B20;
+}
+.ReviewsTitle h2{
+    color: #FFF;
+    font-family: var(--font-dm);
+    font-size: 40px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 40px; /* 100% */
+}
+.ReviewsTitle{
+    color: #FFF;
+    padding-left: 150px;
+    margin-top: 115px;
+}
+.ReviewsItem{
+    width: 447px;
+    height: 338px;
+    flex-shrink: 0;
+    border-radius: 16px;
+    background: #FFF;
+    box-shadow: 0px 10px 40px 0px rgba(0, 0, 0, 0.05);
+    gap: 30px;
+    font-family: var(--font-dm);
+}
+.ReviewsGap{
+    display: flex;
+    flex-direction: row;
+    gap: 50px;
+}
+.ReviewsItemText{
+    padding-left: 40px;
+    padding-right: 46.6px;
+}
+.mySwiper{
+    width: 100%;
+}
+.swiper-slide swiper-slide-active{
+    width: max-content;
+}
+.Reviews{
+    padding-left: 150px;
+}
+.ReviewsItemTitle{
+    padding-left: 40px;
+    padding-top: 30px;
+    display: flex;
+    flex-direction: row;
+    gap: 150px;
+    color: #050B20;
+    font-family: var(--font-dm);
+    font-size: 20px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: 37px; /* 185% */
+}
+.ReviewsItemfooter{
+    display: flex;
+    padding-left: 40px;
+    align-items: center;
+    gap: 20px;
+}
+.ReviewsItemImg{
+    height: 40px;
+    width: 40px;
+
+}
+.BlogItemTitle p{
+    margin: 0px;
+}

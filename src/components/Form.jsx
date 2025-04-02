@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import './Form.css'
+import '../styles/Block/Form.css'
 
 const Form = () => {
   const [activeTab, setActiveTab] = useState('new')
@@ -59,7 +59,7 @@ const Form = () => {
       <div className="price-range-group">
         <label>Select Price</label>
         <div className="price-slider-container">
-          <div className="price-label"><span className="price-labels">$0</span></div>
+          <div className="price-label"><span className="price-labels">₸0</span></div>
           <input
             type="range"
             min="0"
@@ -68,7 +68,7 @@ const Form = () => {
             onChange={(e) => setPriceRange(e.target.value)}
             className="price-slider"
           />
-          <div className="price-label"><span className='price-labels'>${priceRange.toLocaleString()}</span></div>
+          <div className="price-label"><span className='price-labels'>₸{priceRange.toLocaleString()}</span></div>
         </div>
       </div>
 
