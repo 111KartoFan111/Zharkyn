@@ -13,7 +13,7 @@ const CarBlog = () => {
   return (
     <div id='blog' className='BlogBlock'>
         <div className='BlogTitle'>
-            <h2>Что говорят наши клиенты?</h2>
+            <h2>Блог</h2>
         </div>
         <div className='Blog'>
         <Swiper modules={[Navigation]} navigation={true} className="mySwiper">
