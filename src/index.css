@@ -36,3 +36,11 @@ img{
   /* colors */
   --color-header: #050B20;
 }
+.swiper-slide.swiper-slide-active{
+  width: max-content;
+  display: flex !important;
+  gap: 30px;
+}
+.swiper-slide.swiper-slide-prev{
+  display: flex !important;
+}

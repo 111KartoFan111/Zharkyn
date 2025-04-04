@@ -4,7 +4,7 @@ import { useRef } from "react";
 import { useFrame } from "@react-three/fiber";
 import { Canvas, useLoader } from "@react-three/fiber";
 import "./Knight3d.css";
-import { OrbitControls } from "@react-three/drei";
+import { OrbitControls, TrailTexture } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const Knight = () => {
@@ -20,7 +20,7 @@ const Knight = () => {
       ref={knightRef}
       object={gltf.scene}
       scale={10}
-      position={[6, -13.3,-1]}
+      position={[6, -21.3,-1]}
     />
   );
 };
@@ -30,7 +30,7 @@ const CarModel = () => {
       <div className="hero-block">
         <Canvas camera={{ position: [100, 70, 100], fov: 20 }}>
           <ambientLight intensity={0.10} />
-          <directionalLight position={[100, 100, 1]} intensity={40} />
+          <directionalLight position={[50, 50, 1]} intensity={40} />
           <Knight />
 
           <OrbitControls

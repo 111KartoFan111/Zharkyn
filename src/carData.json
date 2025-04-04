@@ -1,0 +1,129 @@
+{
+    "cars": [
+      {
+        "id": 1,
+        "brand": "Tesla",
+        "model": "Model 3",
+        "category": "New Car",
+        "price": "от 1 000 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Электрический седан нового поколения",
+        "fullCharacteristics": {
+          "year": 2024,
+          "bodyType": "Седан",
+          "engineType": "Электрический",
+          "driveUnit": "Полный привод",
+          "batteryCapacity": "82 кВт·ч",
+          "range": "до 602 км",
+          "color": "Серебристый",
+          "комплектация": "Премиум",
+          "additionalFeatures": [
+            "Автопилот",
+            "Большой сенсорный экран",
+            "Беспроводные обновления",
+            "Система активной безопасности"
+          ]
+        },
+        "gallery": [
+          "/img/cars/tesla-model-3-1.jpg",
+          "/img/cars/tesla-model-3-2.jpg",
+          "/img/cars/tesla-model-3-3.jpg"
+        ]
+      },
+      {
+        "id": 2,
+        "brand": "Toyota",
+        "model": "Camry",
+        "category": "Used Car",
+        "price": "от 800 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Надежный семейный седан",
+        "fullCharacteristics": {
+          "year": 2022,
+          "bodyType": "Седан",
+          "engineType": "Бензиновый",
+          "driveUnit": "Передний привод",
+          "engineVolume": "2.5 л",
+          "fuelConsumption": "8.5 л/100 км",
+          "color": "Белый",
+          "mileage": "45 000 км",
+          "комплектация": "Комфорт",
+          "additionalFeatures": [
+            "Круиз-контроль",
+            "Парктроник",
+            "Мультимедиа-система",
+            "Кондиционер"
+          ]
+        },
+        "gallery": [
+          "/img/cars/toyota-camry-1.jpg",
+          "/img/cars/toyota-camry-2.jpg",
+          "/img/cars/toyota-camry-3.jpg"
+        ]
+      },
+      {
+        "id": 3,
+        "brand": "Mercedes-Benz",
+        "model": "GLE 350",
+        "category": "In Stock",
+        "price": "от 1 500 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Роскошный внедорожник премиум-класса",
+        "fullCharacteristics": {
+          "year": 2023,
+          "bodyType": "Внедорожник",
+          "engineType": "Дизельный",
+          "driveUnit": "Полный привод",
+          "engineVolume": "3.0 л",
+          "fuelConsumption": "7.2 л/100 км",
+          "color": "Темно-синий",
+          "mileage": "15 000 км",
+          "комплектация": "Люкс",
+          "additionalFeatures": [
+            "Адаптивный круиз-контроль",
+            "Панорамная крыша",
+            "Массажные сиденья",
+            "360-градусная камера",
+            "Система помощи при парковке"
+          ]
+        },
+        "gallery": [
+          "/img/cars/mercedes-gle-1.jpg",
+          "/img/cars/mercedes-gle-2.jpg",
+          "/img/cars/mercedes-gle-3.jpg"
+        ]
+      },
+      {
+        "id": 4,
+        "brand": "Mercedes-Benz",
+        "model": "GLE 350",
+        "category": "In Stock",
+        "price": "от 1 500 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Роскошный внедорожник премиум-класса",
+        "fullCharacteristics": {
+          "year": 2023,
+          "bodyType": "Внедорожник",
+          "engineType": "Дизельный",
+          "driveUnit": "Полный привод",
+          "engineVolume": "3.0 л",
+          "fuelConsumption": "7.2 л/100 км",
+          "color": "Темно-синий",
+          "mileage": "15 000 км",
+          "комплектация": "Люкс",
+          "additionalFeatures": [
+            "Адаптивный круиз-контроль",
+            "Панорамная крыша",
+            "Массажные сиденья",
+            "360-градусная камера",
+            "Система помощи при парковке"
+          ]
+        },
+        "gallery": [
+          "/img/cars/mercedes-gle-1.jpg",
+          "/img/cars/mercedes-gle-2.jpg",
+          "/img/cars/mercedes-gle-3.jpg"
+        ]
+      }
+    ]
+  }

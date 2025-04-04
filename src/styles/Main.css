@@ -5,6 +5,7 @@
     padding-left: 100px;
     padding-top: 40px;
     padding-right: 100px;
+    user-select: none;
 }
 
 .UpperBut {
@@ -40,4 +41,9 @@
 }
 .swiper-button-next{
     display: none;
+}
+.swiper-slide.swiper-slide-active{
+    width: max-content;
+    display: flex !important;
+    gap: 30px;
 }
