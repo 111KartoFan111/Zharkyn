@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import '../styles/Block/AutoLoanCalculator.css';
+import carData from '../carData.json';
+import blogData from '../blogData.json';
 
 const AutoLoanCalculator = () => {
   const [formData, setFormData] = useState({
