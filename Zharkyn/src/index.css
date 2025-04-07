@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200..800&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+@font-face {
+  font-family: 'Core Sans AR';
+  src: url('/fonts/CoreSansAR85HeavyRegular.woff2') format('woff2'),
+       url('/public\font\Core-Sans\FONTSPRINGDEMO-CoreSansAR85HeavyRegular.woff') format('woff');
+  font-weight: 900;
+  font-style: normal;
+}
+body{
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* отключает горизонтальный скролл */
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+a{
+  text-decoration: none;
+  user-select: none;
+}
+img{
+  user-select: none;
+}
+
+:root{
+  /* font-family */
+  --font-header: 'Core Sans AR';
+  --font-dm:'DM Sans', sans-serif;
+
+  /* font-size */
+  --font-size-header: 20px;
+
+  /* colors */
+  --color-header: #050B20;
+}
+.swiper-slide.swiper-slide-active{
+  width: max-content;
+  display: flex !important;
+  gap: 30px;
+}
+.swiper-slide.swiper-slide-prev{
+  display: flex !important;
+}

@@ -1,0 +1,49 @@
+.main{
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    padding-left: 100px;
+    padding-top: 40px;
+    padding-right: 100px;
+    user-select: none;
+}
+
+.UpperBut {
+    position: sticky;
+    bottom: 20px;
+    right: 20px;
+    top: 50vh; /* adjust this value to set the threshold */
+    width: 40px;
+    height: 40px;
+    padding: 12px 13.5px 15px 13.5px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    border-radius: 20px;
+    background: #405FF2;
+    margin-left: 100px;
+}
+.upFlex{
+    display: flex;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+}
+.upImg{
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+.swiper-button-prev{
+    display: none;
+}
+.swiper-button-next{
+    display: none;
+}
+.swiper-slide.swiper-slide-active{
+    width: max-content;
+    display: flex !important;
+    gap: 30px;
+}

@@ -1,0 +1,10 @@
+.filter{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    height: auto;
+    padding: 110px 100px 0px;
+    background-color: var(--color-header);
+    border-radius: 0px 0px 30px 30px;
+    background: #050B20;
+}

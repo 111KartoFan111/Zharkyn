@@ -1,0 +1,136 @@
+{
+    "cars": [
+      {
+        "id": 1,
+        "brand": "Tesla",
+        "model": "Model 3",
+        "category": "New Car",
+        "price": "от 20 000 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Электрический седан нового поколения",
+        "image": "https://astps-photos-kl.kcdn.kz/webp/c1/c1e1edfc-541f-44d5-85ea-9c8f82b9a4e6/2-full.webp",
+        "fullCharacteristics": {
+          "year": 2024,
+          "bodyType": "Седан",
+          "engineType": "Электрический",
+          "driveUnit": "Полный привод",
+          "batteryCapacity": "82 кВт·ч",
+          "range": "до 602 км",
+          "color": "Серебристый",
+          "комплектация": "Премиум",
+          "additionalFeatures": [
+            "Автопилот",
+            "Большой сенсорный экран",
+            "Беспроводные обновления",
+            "Система активной безопасности"
+          ]
+        },
+        "gallery": [
+          "https://astps-photos-kl.kcdn.kz/webp/c1/c1e1edfc-541f-44d5-85ea-9c8f82b9a4e6/1-full.webp",
+          "https://astps-photos-kl.kcdn.kz/webp/c1/c1e1edfc-541f-44d5-85ea-9c8f82b9a4e6/2-750x470.jpg",
+          "https://astps-photos-kl.kcdn.kz/webp/c1/c1e1edfc-541f-44d5-85ea-9c8f82b9a4e6/3-750x470.jpg"
+        ]
+      },
+      {
+        "id": 2,
+        "brand": "Toyota",
+        "model": "Camry",
+        "category": "Used Car",
+        "price": "16 000 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Надежный семейный седан",
+        "image": "https://astps-photos-kl.kcdn.kz/webp/dc/dca0ce55-ac2f-4b27-931c-9e9cfb8b603f/2-1200x752.webp",
+        "fullCharacteristics": {
+          "year": 2022,
+          "bodyType": "Седан",
+          "engineType": "Бензиновый",
+          "driveUnit": "Передний привод",
+          "engineVolume": "2.5 л",
+          "fuelConsumption": "8.5 л/100 км",
+          "color": "Белый",
+          "mileage": "45 000 км",
+          "комплектация": "Комфорт",
+          "additionalFeatures": [
+            "Круиз-контроль",
+            "Парктроник",
+            "Мультимедиа-система",
+            "Кондиционер"
+          ]
+        },
+        "gallery": [
+          "https://astps-photos-kl.kcdn.kz/webp/dc/dca0ce55-ac2f-4b27-931c-9e9cfb8b603f/1-750x470.jpg",
+          "https://astps-photos-kl.kcdn.kz/webp/dc/dca0ce55-ac2f-4b27-931c-9e9cfb8b603f/7-750x470.jpg",
+          "https://astps-photos-kl.kcdn.kz/webp/dc/dca0ce55-ac2f-4b27-931c-9e9cfb8b603f/9-750x470.jpg"
+        ],
+        "link": "https://kolesa.kz/a/show/185583193?search_id=d6a7213dece23ce49e5aa0c92a4d5e827758d028&search_type=filter&advert_position=2"
+      },
+      {
+        "id": 3,
+        "brand": "Mercedes-Benz",
+        "model": "GLE 350",
+        "category": "In Stock",
+        "price": "47 000 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Роскошный внедорожник премиум-класса",
+        "image": "https://astps-photos-kl.kcdn.kz/webp/3a/3a3b438d-4784-4e7c-a9fc-9e5d6b423026/16-1200x752.webp",
+        "fullCharacteristics": {
+          "year": 2023,
+          "bodyType": "Внедорожник",
+          "engineType": "Дизельный",
+          "driveUnit": "Полный привод",
+          "engineVolume": "3.0 л",
+          "fuelConsumption": "7.2 л/100 км",
+          "color": "Темно-синий",
+          "mileage": "15 000 км",
+          "комплектация": "Люкс",
+          "additionalFeatures": [
+            "Адаптивный круиз-контроль",
+            "Панорамная крыша",
+            "Массажные сиденья",
+            "360-градусная камера",
+            "Система помощи при парковке"
+          ]
+        },
+        "gallery": [
+          "https://astps-photos-kl.kcdn.kz/webp/3a/3a3b438d-4784-4e7c-a9fc-9e5d6b423026/17-full.webp",
+          "https://astps-photos-kl.kcdn.kz/webp/3a/3a3b438d-4784-4e7c-a9fc-9e5d6b423026/18-full.webp",
+          "https://astps-photos-kl.kcdn.kz/webp/3a/3a3b438d-4784-4e7c-a9fc-9e5d6b423026/19-full.webp"
+        ],
+        "link": "https://kolesa.kz/a/show/183396642?search_id=b8744b6be537f519fc3ff5a58c3c1e88c8296419&search_type=new_auto&advert_position=1"
+      },
+      {
+        "id": 4,
+        "brand": "Hyundai",
+        "model": "Sonata 2024",
+        "category": "In Stock",
+        "price": "17 000 000 ₸",
+        "time": "02.06.2025",
+        "shortDescription": "Роскошный седан премиум-класса",
+        "image": "https://astps-photos-kl.kcdn.kz/webp/f6/f651063c-99a8-4ab5-ae17-9e61598ed50d/3-1200x752.webp",
+        "fullCharacteristics": {
+          "year": 2023,
+          "bodyType": "Седан",
+          "engineType": "Бензиновый",
+          "driveUnit": "Полный привод",
+          "engineVolume": "3.0 л",
+          "fuelConsumption": "7.2 л/100 км",
+          "color": "Темно-синий",
+          "mileage": "15 000 км",
+          "комплектация": "Люкс",
+          "additionalFeatures": [
+            "Адаптивный круиз-контроль",
+            "Панорамная крыша",
+            "Массажные сиденья",
+            "360-градусная камера",
+            "Система помощи при парковке"
+          ]
+        },
+        "gallery": [
+          "https://astps-photos-kl.kcdn.kz/webp/f6/f651063c-99a8-4ab5-ae17-9e61598ed50d/4-750x470.jpg",
+          "https://astps-photos-kl.kcdn.kz/webp/f6/f651063c-99a8-4ab5-ae17-9e61598ed50d/1-750x470.jpg",
+          "https://astps-photos-kl.kcdn.kz/webp/f6/f651063c-99a8-4ab5-ae17-9e61598ed50d/6-750x470.jpg"
+        ],
+        "link": "https://kolesa.kz/a/show/183475987?search_id=6c0461f954bae9c06cce395a70bb52d7594a4b7b&search_type=new_auto&advert_position=1"
+      }
+    ]
+  }
