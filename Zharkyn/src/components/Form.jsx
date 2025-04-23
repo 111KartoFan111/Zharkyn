@@ -1,39 +1,99 @@
 import React, { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../styles/Block/Form.css'
 
 const Form = () => {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('new')
-  const [make, setMake] = useState('')
-  const [model, setModel] = useState('')
-  const [priceFrom, setPriceFrom] = useState(1000000)
-  const [priceTo, setPriceTo] = useState(10000000)
+  const [formData, setFormData] = useState({
+    make: '',
+    model: '',
+    priceFrom: 1000000,
+    priceTo: 10000000,
+    yearFrom: 2015,
+    yearTo: 2025,
+    mileageFrom: '',
+    mileageTo: '',
+    fuelType: '',
+    transmission: ''
+  })
 
-  const makes = ['', 'Audi', 'BMW', 'Mercedes', 'Toyota']
+  const makes = ['', 'Audi', 'BMW', 'Mercedes', 'Toyota', 'Tesla', 'Hyundai', 'Kia', 'Nissan', 'Lexus']
   const models = {
     '': [],
     'Audi': ['Q7', 'A4', 'A6', 'Q5'],
     'BMW': ['X5', '3 Series', '5 Series', 'X3'],
     'Mercedes': ['GLE', 'C-Class', 'E-Class', 'GLC'],
-    'Toyota': ['Camry', 'RAV4', 'Highlander', 'Corolla']
+    'Toyota': ['Camry', 'RAV4', 'Highlander', 'Corolla'],
+    'Tesla': ['Model 3', 'Model Y', 'Model S', 'Model X'],
+    'Hyundai': ['Sonata', 'Tucson', 'Santa Fe', 'Elantra'],
+    'Kia': ['K5', 'Sportage', 'Sorento', 'Seltos'],
+    'Nissan': ['Qashqai', 'X-Trail', 'Juke', 'Leaf'],
+    'Lexus': ['RX', 'NX', 'ES', 'UX']
+  }
+  
+  const fuelTypes = [
+    { value: '', label: 'Все типы' },
+    { value: 'petrol', label: 'Бензин' },
+    { value: 'diesel', label: 'Дизель' },
+    { value: 'hybrid', label: 'Гибрид' },
+    { value: 'electric', label: 'Электро' },
+    { value: 'gas', label: 'Газ' }
+  ]
+  
+  const transmissions = [
+    { value: '', label: 'Все типы' },
+    { value: 'manual', label: 'Механика' },
+    { value: 'automatic', label: 'Автомат' },
+    { value: 'robot', label: 'Робот' },
+    { value: 'variator', label: 'Вариатор' }
+  ]
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }))
   }
 
   const handleSearch = () => {
     const baseUrl = 'https://kolesa.kz/cars/';
     const searchParams = new URLSearchParams();
 
-    searchParams.append('price[from]', priceFrom);
-    searchParams.append('price[to]', priceTo);
+    // Add price filter
+    if (formData.priceFrom) searchParams.append('price[from]', formData.priceFrom);
+    if (formData.priceTo) searchParams.append('price[to]', formData.priceTo);
+    
+    // Add year filter
+    if (formData.yearFrom) searchParams.append('year[from]', formData.yearFrom);
+    if (formData.yearTo) searchParams.append('year[to]', formData.yearTo);
+    
+    // Add mileage filter
+    if (formData.mileageFrom) searchParams.append('mileage[from]', formData.mileageFrom);
+    if (formData.mileageTo) searchParams.append('mileage[to]', formData.mileageTo);
+    
+    // Add fuel type filter
+    if (formData.fuelType) searchParams.append('auto-fuel', formData.fuelType);
+    
+    // Add transmission filter
+    if (formData.transmission) searchParams.append('auto-car-transm', formData.transmission);
 
     const makeParams = [];
-    if (make) makeParams.push(make.toLowerCase());
-    if (make && model) makeParams.push(model.toLowerCase().replace(' ', '-'));
+    if (formData.make) makeParams.push(formData.make.toLowerCase());
+    if (formData.make && formData.model) makeParams.push(formData.model.toLowerCase().replace(' ', '-'));
 
     const fullUrl = makeParams.length
       ? `${baseUrl}${activeTab}/${makeParams.join('/')}/?${searchParams.toString()}`
-      : `${baseUrl}?${searchParams.toString()}`;
+      : `${baseUrl}${activeTab}/?${searchParams.toString()}`;
 
     window.open(fullUrl, '_blank');
-  }
+  };
+
+  // In the future, this could fetch results from the backend API
+  const handleLocalSearch = () => {
+    navigate('/search', { state: { filters: formData, activeTab } });
+  };
 
   return (
     <div className="car-filter-container">
@@ -52,74 +112,166 @@ const Form = () => {
         </button>
       </div>
 
-      <div className="select-group">
-        <label>Выберите марку</label>
-        <select
-          value={make}
-          onChange={(e) => {
-            setMake(e.target.value);
-            setModel('');
-          }}
+      <div className="filter-form">
+        <div className="filter-row">
+          <div className="select-group">
+            <label>Выберите марку</label>
+            <select
+              name="make"
+              value={formData.make}
+              onChange={(e) => {
+                handleInputChange(e);
+                setFormData(prev => ({ ...prev, model: '' }));
+              }}
+            >
+              {makes.map(brand => (
+                <option key={brand} value={brand}>{brand || 'Все марки'}</option>
+              ))}
+            </select>
+          </div>
+
+          {formData.make && (
+            <div className="select-group">
+              <label>Выберите модель</label>
+              <select
+                name="model"
+                value={formData.model}
+                onChange={handleInputChange}
+              >
+                <option value="">Все модели</option>
+                {models[formData.make].map(modelName => (
+                  <option key={modelName} value={modelName}>{modelName}</option>
+                ))}
+              </select>
+            </div>
+          )}
+        </div>
+
+        <div className="filter-row">
+          <div className="price-range-group">
+            <label>Цена от</label>
+            <div className="price-slider-container">
+              <div className="price-label"><span className="price-labels">₸0</span></div>
+              <input
+                type="range"
+                min="0"
+                max="25000000"
+                name="priceFrom"
+                value={formData.priceFrom}
+                onChange={handleInputChange}
+                className="price-slider"
+              />
+              <div className="price-label"><span className='price-labels'>₸{Number(formData.priceFrom).toLocaleString()}</span></div>
+            </div>
+          </div>
+
+          <div className="price-range-group">
+            <label>Цена до</label>
+            <div className="price-slider-container">
+              <div className="price-label"><span className="price-labels">₸0</span></div>
+              <input
+                type="range"
+                min="0"
+                max="25000000"
+                name="priceTo"
+                value={formData.priceTo}
+                onChange={handleInputChange}
+                className="price-slider"
+              />
+              <div className="price-label"><span className='price-labels'>₸{Number(formData.priceTo).toLocaleString()}</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div className="filter-row">
+          <div className="select-group">
+            <label>Год выпуска от</label>
+            <select
+              name="yearFrom"
+              value={formData.yearFrom}
+              onChange={handleInputChange}
+            >
+              <option value="">Любой</option>
+              {Array.from({ length: 2025 - 1990 + 1 }, (_, i) => 2025 - i).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="select-group">
+            <label>Год выпуска до</label>
+            <select
+              name="yearTo"
+              value={formData.yearTo}
+              onChange={handleInputChange}
+            >
+              <option value="">Любой</option>
+              {Array.from({ length: 2025 - 1990 + 1 }, (_, i) => 2025 - i).map(year => (
+                <option key={year} value={year}>{year}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <div className="filter-row">
+          <div className="input-group">
+            <label>Пробег от (км)</label>
+            <input
+              type="number"
+              name="mileageFrom"
+              value={formData.mileageFrom}
+              onChange={handleInputChange}
+              placeholder="Любой"
+            />
+          </div>
+          
+          <div className="input-group">
+            <label>Пробег до (км)</label>
+            <input
+              type="number"
+              name="mileageTo"
+              value={formData.mileageTo}
+              onChange={handleInputChange}
+              placeholder="Любой"
+            />
+          </div>
+        </div>
+
+        <div className="filter-row">
+          <div className="select-group">
+            <label>Тип топлива</label>
+            <select
+              name="fuelType"
+              value={formData.fuelType}
+              onChange={handleInputChange}
+            >
+              {fuelTypes.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+          
+          <div className="select-group">
+            <label>Коробка передач</label>
+            <select
+              name="transmission"
+              value={formData.transmission}
+              onChange={handleInputChange}
+            >
+              {transmissions.map(option => (
+                <option key={option.value} value={option.value}>{option.label}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        <button
+          className="search-button"
+          onClick={handleSearch}
         >
-          {makes.map(brand => (
-            <option key={brand} value={brand}>{brand || 'Все марки'}</option>
-          ))}
-        </select>
+          Найти
+        </button>
       </div>
-
-      {make && (
-        <div className="select-group">
-          <label>Выберите модель</label>
-          <select
-            value={model}
-            onChange={(e) => setModel(e.target.value)}
-          >
-            <option value="">Все модели</option>
-            {models[make].map(modelName => (
-              <option key={modelName} value={modelName}>{modelName}</option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      <div className="price-range-group">
-        <label>Цена от</label>
-        <div className="price-slider-container">
-          <div className="price-label"><span className="price-labels">₸0</span></div>
-          <input
-            type="range"
-            min="0"
-            max="25000000"
-            value={priceFrom}
-            onChange={(e) => setPriceFrom(e.target.value)}
-            className="price-slider"
-          />
-          <div className="price-label"><span className='price-labels'>₸{priceFrom.toLocaleString()}</span></div>
-        </div>
-      </div>
-
-      <div className="price-range-group">
-        <label>Цена до</label>
-        <div className="price-slider-container">
-          <div className="price-label"><span className="price-labels">₸0</span></div>
-          <input
-            type="range"
-            min="0"
-            max="25000000"
-            value={priceTo}
-            onChange={(e) => setPriceTo(e.target.value)}
-            className="price-slider"
-          />
-          <div className="price-label"><span className='price-labels'>₸{priceTo.toLocaleString()}</span></div>
-        </div>
-      </div>
-
-      <button
-        className="search-button"
-        onClick={handleSearch}
-      >
-        Найти
-      </button>
     </div>
   )
 }

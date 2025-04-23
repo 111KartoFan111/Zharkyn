@@ -1,17 +1,44 @@
 import React from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import Logo from './Logo/Logo'
 import '../styles/Header/Header.css'
 
-const Header = () => {
+const Header = ({ user, onLogout }) => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    if (onLogout) {
+      onLogout();
+      navigate('/');
+    }
+  };
+
   return (
     <div className='header'>
-        <Logo />
+        <Link to="/">
+          <Logo />
+        </Link>
         <nav>
             <ul>
-                <a className='active' href="/"><li>Главная</li></a>
-                <a className='active' href="#calculator"><li>Калькулятор</li></a>
-                <a className='active' href="#contact"><li>Cвязаться</li></a>
-                <a className='active' href="#blog"><li>Блог</li></a>
+                <Link className='active' to="/"><li>Главная</li></Link>
+                <Link className='active' to="#calculator"><li>Калькулятор</li></Link>
+                <Link className='active' to="#blog"><li>Блог</li></Link>
+                <Link className='active' to="#contact"><li>Cвязаться</li></Link>
+                
+                {!user ? (
+                  <>
+                    <Link className='active' to="/login"><li>Войти</li></Link>
+                    <Link className='active' to="/register"><li>Регистрация</li></Link>
+                  </>
+                ) : (
+                  <>
+                    <Link className='active' to="/profile"><li>Профиль</li></Link>
+                    {user.role === 'admin' && (
+                      <Link className='active' to="/admin"><li>Админ панель</li></Link>
+                    )}
+                    <a className='active' href="#" onClick={handleLogout}><li>Выйти</li></a>
+                  </>
+                )}
             </ul>
         </nav>
     </div>
