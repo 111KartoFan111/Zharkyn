@@ -7,6 +7,13 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import CarDetails from './pages/CarDetails';
 import AdminPanel from './pages/AdminPanel';
+import AddListing from './pages/AddListing';
+import SearchResults from './pages/SearchResults';
+import BlogList from './pages/BlogList.jsx';
+import BlogDetail from './pages/BlogDetail.jsx';
+import CreateBlog from './pages/CreateBlog.jsx';
+import MyBlogs from './pages/MyBlogs.jsx';
+import EditBlog from './pages/EditBlog.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 import './App.css';
@@ -61,23 +68,59 @@ function App() {
     <Router>
       <Routes>
         <Route path="/" element={<Main user={user} onLogout={logout} />} />
-        <Route path="/car/:id" element={<CarDetails user={user} />} />
+        
+        {/* Car related routes */}
+        <Route path="/car/:id" element={<CarDetails user={user} onLogout={logout} />} />
+        <Route path="/search" element={<SearchResults user={user} onLogout={logout} />} />
+        
+        {/* Authentication routes */}
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/profile" /> : <Login onLogin={login} />
         } />
         <Route path="/register" element={
           isAuthenticated ? <Navigate to="/" /> : <Register />
         } />
+        
+        {/* User profile and listings routes */}
         <Route path="/profile" element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Profile user={user} onLogout={logout} />
           </ProtectedRoute>
         } />
+        <Route path="/add-listing" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <AddListing user={user} onLogout={logout} />
+          </ProtectedRoute>
+        } />
+        
+        {/* Blog routes */}
+        <Route path="/blogs" element={<BlogList user={user} onLogout={logout} />} />
+        <Route path="/blog/:id" element={<BlogDetail user={user} onLogout={logout} />} />
+        <Route path="/my-blogs" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <MyBlogs user={user} onLogout={logout} />
+          </ProtectedRoute>
+        } />
+        <Route path="/create-blog" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <CreateBlog user={user} onLogout={logout} />
+          </ProtectedRoute>
+        } />
+        <Route path="/edit-blog/:id" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <EditBlog user={user} onLogout={logout} />
+          </ProtectedRoute>
+        } />
+        
+        {/* Admin routes */}
         <Route path="/admin" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="admin">
+          <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="admin" user={user}>
             <AdminPanel user={user} onLogout={logout} />
           </ProtectedRoute>
         } />
+        
+        {/* Fallback route */}
+        <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </Router>
   );

@@ -1,4 +1,4 @@
-// src/services/api.js
+// src/services/api.js (extended with listing and blog functionality)
 import axios from 'axios';
 
 // Base API URL - this should be updated based on your environment
@@ -37,7 +37,7 @@ apiClient.interceptors.response.use(
   }
 );
 
-// API services
+// Auth service
 const authService = {
   login: async (credentials) => {
     const formData = new FormData();
@@ -63,72 +63,83 @@ const authService = {
   }
 };
 
+// Car service
 const carService = {
-    getCars: async (filters = {}) => {
-      const response = await apiClient.get('/cars', { params: filters });
-      return response.data;
-    },
+  getCars: async (filters = {}) => {
+    const response = await apiClient.get('/cars', { params: filters });
+    return response.data;
+  },
+  
+  getCarById: async (id) => {
+    const response = await apiClient.get(`/cars/${id}`);
+    return response.data;
+  },
+  
+  searchCars: async (filterData) => {
+    // Clean up filter data by removing empty strings and null values
+    const cleanFilterData = {};
     
-    getCarById: async (id) => {
-      const response = await apiClient.get(`/cars/${id}`);
-      return response.data;
-    },
+    Object.keys(filterData).forEach(key => {
+      const value = filterData[key];
+      if (value !== null && value !== undefined && value !== '') {
+        cleanFilterData[key] = value;
+      }
+    });
     
-    searchCars: async (filterData) => {
-      // Clean up filter data by removing empty strings and null values
-      const cleanFilterData = {};
-      
-      Object.keys(filterData).forEach(key => {
-        const value = filterData[key];
-        if (value !== null && value !== undefined && value !== '') {
-          cleanFilterData[key] = value;
-        }
-      });
-      
-      // If no backend available, return mock data
-      if (!import.meta.env.VITE_API_URL) {
-        console.warn('No API URL specified. Using mock data for search.');
-        
-        // Return cars filtered by brand or model if provided
-        const cars = (await import('../carData.json')).cars;
-        let filteredCars = [...cars];
-        
-        if (cleanFilterData.brand) {
-          const brandLower = cleanFilterData.brand.toLowerCase();
-          filteredCars = filteredCars.filter(car => 
-            car.brand.toLowerCase().includes(brandLower)
-          );
-        }
-        
-        if (cleanFilterData.model) {
-          const modelLower = cleanFilterData.model.toLowerCase();
-          filteredCars = filteredCars.filter(car => 
-            car.model.toLowerCase().includes(modelLower)
-          );
-        }
-        
-        if (cleanFilterData.category) {
-          filteredCars = filteredCars.filter(car => 
-            car.category === cleanFilterData.category
-          );
-        }
-        
-        return filteredCars;
-      }
-      
-      try {
-        const response = await apiClient.post('/cars/search', cleanFilterData);
-        return response.data;
-      } catch (error) {
-        console.error('Search API error:', error);
-        
-        // Fallback to local data if API fails
-        const cars = (await import('../carData.json')).cars;
-        return cars;
-      }
+    try {
+      const response = await apiClient.post('/cars/search', cleanFilterData);
+      return response.data;
+    } catch (error) {
+      console.error('Search API error:', error);
+      throw error;
     }
-  };
+  },
+  
+  // Listing management methods
+  createListing: async (listingData) => {
+    const response = await apiClient.post('/listings', listingData);
+    return response.data;
+  },
+  
+  getUserListings: async (status = null) => {
+    const params = status ? { status } : {};
+    const response = await apiClient.get('/listings/user', { params });
+    return response.data;
+  },
+  
+  getListingById: async (id) => {
+    const response = await apiClient.get(`/listings/${id}`);
+    return response.data;
+  },
+  
+  updateListing: async (id, data) => {
+    const response = await apiClient.put(`/listings/${id}`, data);
+    return response.data;
+  },
+  
+  deleteListing: async (id) => {
+    const response = await apiClient.delete(`/listings/${id}`);
+    return response.data;
+  },
+  
+  // Admin listing methods
+  getAllListings: async (status = null, skip = 0, limit = 20) => {
+    const params = { skip, limit };
+    if (status) params.status = status;
+    const response = await apiClient.get('/admin/listings', { params });
+    return response.data;
+  },
+  
+  moderateListing: async (listingId, status, comment = '') => {
+    const response = await apiClient.put(`/admin/listings/${listingId}/moderate`, {
+      status,
+      moderator_comment: comment
+    });
+    return response.data;
+  }
+};
 
+// Review service
 const reviewService = {
   getCarReviews: async (carId) => {
     const response = await apiClient.get(`/reviews/car/${carId}`);
@@ -156,6 +167,7 @@ const reviewService = {
   }
 };
 
+// User service
 const userService = {
   updateProfile: async (userId, userData) => {
     const response = await apiClient.put(`/users/${userId}`, userData);
@@ -178,43 +190,129 @@ const userService = {
   },
 };
 
-  const adminService = {
-    // Car management
-    getAllCars: async (skip = 0, limit = 100) => {
-      const response = await apiClient.get('/cars', { params: { skip, limit } });
-      return response.data;
-    },
-    
-    createCar: async (carData) => {
-      const response = await apiClient.post('/cars', carData);
-      return response.data;
-    },
-    
-    updateCar: async (carId, carData) => {
-      const response = await apiClient.put(`/cars/${carId}`, carData);
-      return response.data;
-    },
-    
-    deleteCar: async (carId) => {
-      const response = await apiClient.delete(`/cars/${carId}`);
-      return response.data;
-    },
-    
-    // User management
-    getAllUsers: async (skip = 0, limit = 100) => {
-      const response = await apiClient.get('/users', { params: { skip, limit } });
-      return response.data;
-    },
-    
-    updateUser: async (userId, userData) => {
-      const response = await apiClient.put(`/users/${userId}`, userData);
-      return response.data;
-    },
-    
-    deleteUser: async (userId) => {
-      const response = await apiClient.delete(`/users/${userId}`);
-      return response.data;
-    }
-  };
+// Blog service
+const blogService = {
+  getAllBlogs: async (skip = 0, limit = 10) => {
+    const response = await apiClient.get('/blogs', { params: { skip, limit } });
+    return response.data;
+  },
   
-  export { authService, carService, reviewService, userService, adminService };
+  getFeaturedBlogs: async (limit = 3) => {
+    const response = await apiClient.get('/blogs/featured', { params: { limit } });
+    return response.data;
+  },
+  
+  getBlogById: async (id) => {
+    const response = await apiClient.get(`/blogs/${id}`);
+    // Increment views
+    await apiClient.post(`/blogs/${id}/view`);
+    return response.data;
+  },
+  
+  getUserBlogs: async (status = null) => {
+    const params = status ? { status } : {};
+    const response = await apiClient.get('/blogs/user', { params });
+    return response.data;
+  },
+  
+  createBlog: async (blogData) => {
+    const response = await apiClient.post('/blogs', blogData);
+    return response.data;
+  },
+  
+  updateBlog: async (id, data) => {
+    const response = await apiClient.put(`/blogs/${id}`, data);
+    return response.data;
+  },
+  
+  deleteBlog: async (id) => {
+    const response = await apiClient.delete(`/blogs/${id}`);
+    return response.data;
+  },
+  
+  // Blog interactions
+  likeBlog: async (id) => {
+    const response = await apiClient.post(`/blogs/${id}/like`);
+    return response.data;
+  },
+  
+  unlikeBlog: async (id) => {
+    const response = await apiClient.delete(`/blogs/${id}/like`);
+    return response.data;
+  },
+  
+  addComment: async (blogId, comment) => {
+    const response = await apiClient.post(`/blogs/${blogId}/comments`, { content: comment });
+    return response.data;
+  },
+  
+  deleteComment: async (blogId, commentId) => {
+    const response = await apiClient.delete(`/blogs/${blogId}/comments/${commentId}`);
+    return response.data;
+  },
+  
+  // Admin blog moderation
+  getAllBlogsAdmin: async (status = null, skip = 0, limit = 20) => {
+    const params = { skip, limit };
+    if (status) params.status = status;
+    const response = await apiClient.get('/admin/blogs', { params });
+    return response.data;
+  },
+  
+  moderateBlog: async (blogId, status, comment = '') => {
+    const response = await apiClient.put(`/admin/blogs/${blogId}/moderate`, {
+      status,
+      moderator_comment: comment
+    });
+    return response.data;
+  }
+};
+
+// Admin service
+const adminService = {
+  // Car management
+  getAllCars: async (skip = 0, limit = 100) => {
+    const response = await apiClient.get('/cars', { params: { skip, limit } });
+    return response.data;
+  },
+  
+  createCar: async (carData) => {
+    const response = await apiClient.post('/cars', carData);
+    return response.data;
+  },
+  
+  updateCar: async (carId, carData) => {
+    const response = await apiClient.put(`/cars/${carId}`, carData);
+    return response.data;
+  },
+  
+  deleteCar: async (carId) => {
+    const response = await apiClient.delete(`/cars/${carId}`);
+    return response.data;
+  },
+  
+  // User management
+  getAllUsers: async (skip = 0, limit = 100) => {
+    const response = await apiClient.get('/users', { params: { skip, limit } });
+    return response.data;
+  },
+  
+  updateUser: async (userId, userData) => {
+    const response = await apiClient.put(`/users/${userId}`, userData);
+    return response.data;
+  },
+  
+  deleteUser: async (userId) => {
+    const response = await apiClient.delete(`/users/${userId}`);
+    return response.data;
+  }
+};
+
+export { 
+  authService, 
+  carService, 
+  reviewService, 
+  userService, 
+  blogService, 
+  adminService 
+};

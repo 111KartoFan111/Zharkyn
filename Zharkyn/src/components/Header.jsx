@@ -1,3 +1,4 @@
+// src/components/Header.jsx
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Logo from './Logo/Logo';
@@ -5,6 +6,7 @@ import '../styles/Header/Header.css';
 
 const Header = ({ user, onLogout }) => {
   const navigate = useNavigate();
+  const isAuthenticated = !!user; // Convert user object to boolean
 
   const handleLogout = () => {
     if (onLogout) {
@@ -33,7 +35,7 @@ const Header = ({ user, onLogout }) => {
             <li>Связаться</li>
           </Link>
 
-          {!user ? (
+          {!isAuthenticated ? (
             <>
               <Link className="active" to="/login">
                 <li>Войти</li>
@@ -49,6 +51,9 @@ const Header = ({ user, onLogout }) => {
               </Link>
               <Link className="active" to="/add-listing">
                 <li>Добавить объявление</li>
+              </Link>
+              <Link className="active" to="/my-blogs">
+                <li>Мои блоги</li>
               </Link>
               {user.role === 'admin' && (
                 <Link className="active" to="/admin">

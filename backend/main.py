@@ -9,6 +9,7 @@ import auth_routes
 import user_routes
 import car_routes
 import review_routes
+import listing_routes
 
 # Create database tables if they don't exist
 Base.metadata.create_all(bind=engine)
@@ -41,6 +42,7 @@ app.include_router(auth_routes.router)
 app.include_router(user_routes.router)
 app.include_router(car_routes.router)
 app.include_router(review_routes.router)
+app.include_router(listing_routes.router)
 
 # Serve static files if uploads directory exists
 if os.path.exists("uploads"):

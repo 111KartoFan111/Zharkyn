@@ -1,3 +1,4 @@
+// src/components/FeaturedMain.jsx
 import React, { useState, useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
@@ -6,7 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import '../styles/Block/FeaturedMain.css'
-import carData from '../carData.json';
+import { carService } from '../services/api';
 
 const CarDetailsModal = ({ car, onClose }) => {
   if (!car) return null;
@@ -29,7 +30,7 @@ const CarDetailsModal = ({ car, onClose }) => {
               spaceBetween={10}
               slidesPerView={1}
             >
-              {car.gallery.map((img, index) => (
+              {car.gallery && car.gallery.map((img, index) => (
                 <SwiperSlide key={index}>
                   <img src={img} alt={`${car.brand} ${car.model} - Image ${index + 1}`} />
                 </SwiperSlide>
@@ -39,7 +40,10 @@ const CarDetailsModal = ({ car, onClose }) => {
           <div className="modal-characteristics">
             <h3>Характеристики</h3>
             <div className="characteristics-grid">
-              {Object.entries(car.fullCharacteristics).map(([key, value]) => {
+              {car.fullCharacteristics && Object.entries(car.fullCharacteristics).map(([key, value]) => {
+                // Skip if value is an array (additionalFeatures)
+                if (Array.isArray(value)) return null;
+                
                 const readableKey = {
                   year: 'Год выпуска',
                   bodyType: 'Тип кузова',
@@ -58,23 +62,30 @@ const CarDetailsModal = ({ car, onClose }) => {
                   mileage: 'Пробег',
                 }[key] || key;
 
-                const displayValue = Array.isArray(value)
-                  ? value.join(', ')
-                  : value;
-
                 return (
                   <div key={key} className="characteristic-item">
                     <span className="characteristic-label">{readableKey}:</span>
-                    <span className="characteristic-value">{displayValue}</span>
+                    <span className="characteristic-value">{value}</span>
                   </div>
                 );
               })}
+              
+              {car.fullCharacteristics && car.fullCharacteristics.additionalFeatures && (
+                <div className="characteristic-item full-width">
+                  <span className="characteristic-label">Дополнительные функции:</span>
+                  <div className="characteristic-value feature-list">
+                    {car.fullCharacteristics.additionalFeatures.join(', ')}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
         <div className="modal-footer">
           <div className="price">{car.price}</div>
-          <a href={car.link}><button className="contact-button">Связаться</button></a>
+          <a href={`/car/${car.id}`}>
+            <button className="contact-button">Подробнее</button>
+          </a>
         </div>
       </div>
     </div>
@@ -84,22 +95,44 @@ const CarDetailsModal = ({ car, onClose }) => {
 const FeaturedMain = () => {
   const [activeFilter, setActiveFilter] = useState(localStorage.getItem('featuredFilter') || '');
   const [selectedCar, setSelectedCar] = useState(null);
+  const [cars, setCars] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    fetchCars();
+  }, [activeFilter]);
+
+  const fetchCars = async () => {
+    setLoading(true);
+    try {
+      // Create filter parameters
+      const filters = {};
+      if (activeFilter) {
+        filters.category = activeFilter;
+      }
+      
+      // Approved cars only
+      filters.status = 'approved';
+      
+      // Get cars from API
+      const carsData = await carService.getCars(filters);
+      setCars(carsData);
+    } catch (err) {
+      console.error('Failed to fetch cars:', err);
+      setError('Не удалось загрузить автомобили');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleFilterClick = (filter) => {
     setActiveFilter(filter);
     localStorage.setItem('featuredFilter', filter);
   };
 
-  const getFilteredCars = () => {
-    return carData.cars.filter(car => {
-      if (!activeFilter) return true;
-      return car.category === activeFilter;
-    });
-  };
-
-  const filteredCars = getFilteredCars();
-
-  const carSlides = filteredCars.reduce((acc, car, index) => {
+  // Create slides with 3 cars per slide
+  const carSlides = cars.reduce((acc, car, index) => {
     const slideIndex = Math.floor(index / 3);
     if (!acc[slideIndex]) {
       acc[slideIndex] = [];
@@ -132,54 +165,66 @@ const FeaturedMain = () => {
         </div>
       </div>
       <div className='Slider'>
-        <Swiper
-          modules={[Navigation, Pagination, Scrollbar, A11y]}
-          spaceBetween={50}
-          slidesPerView={1}
-          navigation
-          pagination={{ clickable: true }}
-          scrollbar={{ draggable: true }}
-        >
-          {carSlides.map((slideItems, slideIndex) => (
-            <SwiperSlide key={slideIndex}>
-              <div className='slide-container' style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                gap: '20px'
-              }}>
-                {slideItems.map((car) => (
-                  <div key={car.id} className='item' style={{ flex: 1 }}>
-                    <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
-                      <div className='filter_state'>
-                        <div className='status'>
-                          <h4>{car.category === 'New Car' ? 'Новый' : 'В наличии'}</h4>
+        {loading ? (
+          <div className="loading-spinner">Загрузка...</div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : cars.length === 0 ? (
+          <div className="no-cars-message">Нет доступных автомобилей</div>
+        ) : (
+          <Swiper
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            spaceBetween={50}
+            slidesPerView={1}
+            navigation
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+          >
+            {carSlides.map((slideItems, slideIndex) => (
+              <SwiperSlide key={slideIndex}>
+                <div className='slide-container' style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  gap: '20px'
+                }}>
+                  {slideItems.map((car) => (
+                    <div key={car.id} className='item' style={{ flex: 1 }}>
+                      <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
+                        <div className='filter_state'>
+                          <div className='status'>
+                            <h4>{car.category === 'New Car' ? 'Новый' : 'В наличии'}</h4>
+                          </div>
+                        </div>
+                      </div>
+                      <div className='border'>
+                        <h3>{car.brand} {car.model}</h3>
+                        <div className='descreption'>
+                          {car.fullCharacteristics && (
+                            <>
+                              <h4 className='descreptionText'>{car.fullCharacteristics.bodyType}</h4>
+                              <div className='descreptionicon'></div>
+                              <h4 className='descreptionText'>{car.fullCharacteristics.engineType}</h4>
+                              <div className='descreptionicon'></div>
+                              <h4 className='descreptionText'>{car.fullCharacteristics.transmission}</h4>
+                            </>
+                          )}
+                        </div>
+                        <div className='priceBut'>
+                          <div className='price'>
+                            <h2>{car.price}</h2>
+                          </div>
+                          <div className='but'>
+                            <button onClick={() => setSelectedCar(car)}>Подробнее</button>
+                          </div>
                         </div>
                       </div>
                     </div>
-                    <div className='border'>
-                      <h3>{car.brand} {car.model}</h3>
-                      <div className='descreption'>
-                        <h4 className='descreptionText'>{car.fullCharacteristics.bodyType}</h4>
-                        <div className='descreptionicon'></div>
-                        <h4 className='descreptionText'>{car.fullCharacteristics.engineType}</h4>
-                        <div className='descreptionicon'></div>
-                        <h4 className='descreptionText'>{car.fullCharacteristics.transmission}</h4>
-                      </div>
-                      <div className='priceBut'>
-                        <div className='price'>
-                          <h2>{car.price}</h2>
-                        </div>
-                        <div className='but'>
-                          <button onClick={() => setSelectedCar(car)}>Подробнее</button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
+                  ))}
+                </div>
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
       </div>
 
       {selectedCar && (
