@@ -7,7 +7,6 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import CarDetails from './pages/CarDetails';
 import AdminPanel from './pages/AdminPanel';
-import SearchResults from './pages/SearchResults';
 import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 import './App.css';
@@ -63,9 +62,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Main user={user} onLogout={logout} />} />
         <Route path="/car/:id" element={<CarDetails user={user} />} />
-        <Route path="/search" element={<SearchResults user={user} onLogout={logout} />} />
         <Route path="/login" element={
-          isAuthenticated ? <Navigate to="/" /> : <Login onLogin={login} />
+          isAuthenticated ? <Navigate to="/profile" /> : <Login onLogin={login} />
         } />
         <Route path="/register" element={
           isAuthenticated ? <Navigate to="/" /> : <Register />

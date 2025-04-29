@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 
-const ProtectedRoute = ({ children, isAuthenticated, requiredRole }) => {
+const ProtectedRoute = ({ children, isAuthenticated, requiredRole, user }) => {
   // If not authenticated, redirect to login
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
@@ -8,7 +8,7 @@ const ProtectedRoute = ({ children, isAuthenticated, requiredRole }) => {
   
   // If a specific role is required and user doesn't have it, redirect to home
   // This will be used for admin routes
-  if (requiredRole && window.user?.role !== requiredRole) {
+  if (requiredRole && user?.role !== requiredRole) {
     return <Navigate to="/" />;
   }
   

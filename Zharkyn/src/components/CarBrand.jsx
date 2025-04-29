@@ -33,6 +33,7 @@ const CarBrand = ({ onBrandSelect, selectedBrand }) => {
       <div className="Brand">
         {(showAllBrands ? brands : brands.slice(0, 9)).map((brand) => (
             <div 
+              key={brand.name} // Added key prop here
               className={`BrandItem ${selectedBrand === brand.name.toLowerCase() ? 'selected' : ''}`}
               onClick={() => onBrandSelect(brand.name.toLowerCase())}
             >

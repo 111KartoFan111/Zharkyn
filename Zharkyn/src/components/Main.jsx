@@ -12,6 +12,7 @@ import AutoLoanCalculator from './AutoLoanCalculator'
 import Footer from './Footer.jsx'
 import CarModel from './CarModel'
 
+
 const Main = () => {
   const [selectedBrand, setSelectedBrand] = useState('');
   const [selectedType, setSelectedType] = useState('');

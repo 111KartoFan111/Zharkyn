@@ -10,10 +10,10 @@ const Form = () => {
   const [formData, setFormData] = useState({
     make: '',
     model: '',
-    priceFrom: 1000000,
-    priceTo: 10000000,
-    yearFrom: 2015,
-    yearTo: 2025,
+    priceFrom: '',
+    priceTo: '',
+    yearFrom: '',
+    yearTo: '',
     mileageFrom: '',
     mileageTo: '',
     fuelType: '',
@@ -101,18 +101,25 @@ const Form = () => {
     try {
       // Convert form data to API filter format
       const filterData = {
-        brand: formData.make,
-        model: formData.model,
+        brand: formData.make || null,
+        model: formData.model || null,
         category: activeTab === 'new' ? 'New Car' : 'Used Car',
-        price_from: formData.priceFrom,
-        price_to: formData.priceTo,
-        year_from: formData.yearFrom,
-        year_to: formData.yearTo,
-        mileage_from: formData.mileageFrom,
-        mileage_to: formData.mileageTo,
-        engine_type: formData.fuelType,
-        transmission: formData.transmission
+        price_from: formData.priceFrom || null,
+        price_to: formData.priceTo || null,
+        year_from: formData.yearFrom || null,
+        year_to: formData.yearTo || null,
+        mileage_from: formData.mileageFrom || null,
+        mileage_to: formData.mileageTo || null,
+        engine_type: formData.fuelType || null,
+        transmission: formData.transmission || null
       };
+      
+      // Remove null values to avoid validation errors
+      Object.keys(filterData).forEach(key => {
+        if (filterData[key] === null || filterData[key] === '') {
+          delete filterData[key];
+        }
+      });
       
       // Call the search API
       const results = await carService.searchCars(filterData);
@@ -121,7 +128,7 @@ const Form = () => {
       localStorage.setItem('searchResults', JSON.stringify(results));
       localStorage.setItem('searchFilters', JSON.stringify(filterData));
       
-      // Navigate to search results page (you'd need to create this page)
+      // Navigate to search results page
       navigate('/search');
     } catch (error) {
       console.error('Search failed:', error);
@@ -205,11 +212,11 @@ const Form = () => {
                 min="0"
                 max="25000000"
                 name="priceFrom"
-                value={formData.priceFrom}
+                value={formData.priceFrom || 0}
                 onChange={handleInputChange}
                 className="price-slider"
               />
-              <div className="price-label"><span className='price-labels'>₸{Number(formData.priceFrom).toLocaleString()}</span></div>
+              <div className="price-label"><span className='price-labels'>₸{Number(formData.priceFrom || 0).toLocaleString()}</span></div>
             </div>
           </div>
 
@@ -222,11 +229,11 @@ const Form = () => {
                 min="0"
                 max="25000000"
                 name="priceTo"
-                value={formData.priceTo}
+                value={formData.priceTo || 0}
                 onChange={handleInputChange}
                 className="price-slider"
               />
-              <div className="price-label"><span className='price-labels'>₸{Number(formData.priceTo).toLocaleString()}</span></div>
+              <div className="price-label"><span className='price-labels'>₸{Number(formData.priceTo || 0).toLocaleString()}</span></div>
             </div>
           </div>
         </div>

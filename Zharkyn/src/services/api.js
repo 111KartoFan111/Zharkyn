@@ -64,21 +64,70 @@ const authService = {
 };
 
 const carService = {
-  getCars: async (filters = {}) => {
-    const response = await apiClient.get('/cars', { params: filters });
-    return response.data;
-  },
-  
-  getCarById: async (id) => {
-    const response = await apiClient.get(`/cars/${id}`);
-    return response.data;
-  },
-  
-  searchCars: async (filterData) => {
-    const response = await apiClient.post('/cars/search', filterData);
-    return response.data;
-  }
-};
+    getCars: async (filters = {}) => {
+      const response = await apiClient.get('/cars', { params: filters });
+      return response.data;
+    },
+    
+    getCarById: async (id) => {
+      const response = await apiClient.get(`/cars/${id}`);
+      return response.data;
+    },
+    
+    searchCars: async (filterData) => {
+      // Clean up filter data by removing empty strings and null values
+      const cleanFilterData = {};
+      
+      Object.keys(filterData).forEach(key => {
+        const value = filterData[key];
+        if (value !== null && value !== undefined && value !== '') {
+          cleanFilterData[key] = value;
+        }
+      });
+      
+      // If no backend available, return mock data
+      if (!import.meta.env.VITE_API_URL) {
+        console.warn('No API URL specified. Using mock data for search.');
+        
+        // Return cars filtered by brand or model if provided
+        const cars = (await import('../carData.json')).cars;
+        let filteredCars = [...cars];
+        
+        if (cleanFilterData.brand) {
+          const brandLower = cleanFilterData.brand.toLowerCase();
+          filteredCars = filteredCars.filter(car => 
+            car.brand.toLowerCase().includes(brandLower)
+          );
+        }
+        
+        if (cleanFilterData.model) {
+          const modelLower = cleanFilterData.model.toLowerCase();
+          filteredCars = filteredCars.filter(car => 
+            car.model.toLowerCase().includes(modelLower)
+          );
+        }
+        
+        if (cleanFilterData.category) {
+          filteredCars = filteredCars.filter(car => 
+            car.category === cleanFilterData.category
+          );
+        }
+        
+        return filteredCars;
+      }
+      
+      try {
+        const response = await apiClient.post('/cars/search', cleanFilterData);
+        return response.data;
+      } catch (error) {
+        console.error('Search API error:', error);
+        
+        // Fallback to local data if API fails
+        const cars = (await import('../carData.json')).cars;
+        return cars;
+      }
+    }
+  };
 
 const reviewService = {
   getCarReviews: async (carId) => {

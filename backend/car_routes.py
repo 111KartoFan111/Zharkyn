@@ -133,10 +133,25 @@ async def delete_car(
     db.commit()
     return None
 
-# Search endpoint with more comprehensive filtering options
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy.orm import Session
+from typing import List, Optional, Dict, Any
+from sqlalchemy import and_
+from pydantic import BaseModel
+
+import schemas
+import models
+import auth
+from database import get_db
+
+router = APIRouter(
+    prefix="/cars",
+    tags=["cars"]
+)
+
 @router.post("/search", response_model=List[schemas.Car])
 async def search_cars(
-    filter_data: schemas.CarFilter,
+    filter_data: Dict[str, Any],
     skip: int = 0, 
     limit: int = 100,
     db: Session = Depends(get_db)
@@ -144,28 +159,46 @@ async def search_cars(
     # Build filters list
     filters = []
     
-    if filter_data.brand:
-        filters.append(models.Car.brand.ilike(f"%{filter_data.brand}%"))
-    if filter_data.model:
-        filters.append(models.Car.model.ilike(f"%{filter_data.model}%"))
-    if filter_data.category:
-        filters.append(models.Car.category == filter_data.category)
-    if filter_data.year_from:
-        filters.append(models.Car.year >= filter_data.year_from)
-    if filter_data.year_to:
-        filters.append(models.Car.year <= filter_data.year_to)
-    if filter_data.mileage_from:
-        filters.append(models.Car.mileage >= filter_data.mileage_from)
-    if filter_data.mileage_to:
-        filters.append(models.Car.mileage <= filter_data.mileage_to)
-    if filter_data.engine_type:
-        filters.append(models.Car.engine_type == filter_data.engine_type)
-    if filter_data.transmission:
-        filters.append(models.Car.transmission == filter_data.transmission)
-    if filter_data.body_type:
-        filters.append(models.Car.body_type == filter_data.body_type)
-    if filter_data.color:
-        filters.append(models.Car.color.ilike(f"%{filter_data.color}%"))
+    # Only add filters for fields that have values
+    if filter_data.get('brand'):
+        filters.append(models.Car.brand.ilike(f"%{filter_data['brand']}%"))
+    if filter_data.get('model'):
+        filters.append(models.Car.model.ilike(f"%{filter_data['model']}%"))
+    if filter_data.get('category'):
+        filters.append(models.Car.category == filter_data['category'])
+    
+    # Handle numeric filters and ensure they're valid integers
+    if filter_data.get('year_from') and str(filter_data['year_from']).isdigit():
+        filters.append(models.Car.year >= int(filter_data['year_from']))
+    if filter_data.get('year_to') and str(filter_data['year_to']).isdigit():
+        filters.append(models.Car.year <= int(filter_data['year_to']))
+    if filter_data.get('mileage_from') and str(filter_data['mileage_from']).isdigit():
+        filters.append(models.Car.mileage >= int(filter_data['mileage_from']))
+    if filter_data.get('mileage_to') and str(filter_data['mileage_to']).isdigit():
+        filters.append(models.Car.mileage <= int(filter_data['mileage_to']))
+    
+    # Other filters
+    if filter_data.get('engine_type'):
+        filters.append(models.Car.engine_type == filter_data['engine_type'])
+    if filter_data.get('transmission'):
+        filters.append(models.Car.transmission == filter_data['transmission'])
+    if filter_data.get('body_type'):
+        filters.append(models.Car.body_type == filter_data['body_type'])
+    if filter_data.get('color'):
+        filters.append(models.Car.color.ilike(f"%{filter_data['color']}%"))
+    
+    # Handle price filters - these often need special handling with string price format
+    # For price filtering, we need to parse the string format if your database stores them as strings
+    # This is a simplified example - adjust according to your db schema
+    if filter_data.get('price_from') and str(filter_data['price_from']).isdigit():
+        # If prices are stored as formatted strings, you might need a different approach
+        # This assumes there's a way to compare numeric values in your price strings
+        price_from = str(filter_data['price_from'])
+        filters.append(models.Car.price.contains(price_from))
+    
+    if filter_data.get('price_to') and str(filter_data['price_to']).isdigit():
+        price_to = str(filter_data['price_to'])
+        filters.append(models.Car.price.contains(price_to))
     
     # Apply all filters with AND logic
     query = db.query(models.Car)
