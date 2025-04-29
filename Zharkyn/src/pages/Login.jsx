@@ -32,7 +32,7 @@ const Login = ({ onLogin }) => {
       const data = await authService.login(formData);
       
       // Extract user info from token (in a real app, you might want to make a separate request)
-      let userData = { username: formData.email };
+      let userData = { username: formData.username };
       
       // If backend is connected, try to get user data
       try {
@@ -65,12 +65,12 @@ const Login = ({ onLogin }) => {
           
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
-              <label htmlFor="email">Email</label>
+              <label htmlFor="username">username</label>
               <input
                 type="text"
-                id="email"
-                name="email"
-                value={formData.email}
+                id="username"
+                name="username"
+                value={formData.username}
                 onChange={handleChange}
                 required
               />

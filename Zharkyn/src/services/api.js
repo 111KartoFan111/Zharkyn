@@ -41,7 +41,7 @@ apiClient.interceptors.response.use(
 const authService = {
   login: async (credentials) => {
     const formData = new FormData();
-    formData.append('username', credentials.email);
+    formData.append('username', credentials.username);
     formData.append('password', credentials.password);
     
     const response = await apiClient.post('/token', formData, {
