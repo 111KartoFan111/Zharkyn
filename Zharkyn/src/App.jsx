@@ -1,3 +1,4 @@
+// src/App.jsx
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import Main from './components/Main';
@@ -6,22 +7,39 @@ import Register from './pages/Register';
 import Profile from './pages/Profile';
 import CarDetails from './pages/CarDetails';
 import AdminPanel from './pages/AdminPanel';
+import SearchResults from './pages/SearchResults';
 import ProtectedRoute from './components/ProtectedRoute';
+import { authService } from './services/api';
 import './App.css';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   
   useEffect(() => {
-    // Check for token in localStorage
-    const token = localStorage.getItem('token');
-    if (token) {
-      // Validate token with backend (this will be implemented later)
-      setIsAuthenticated(true);
-      // Get user data (placeholder for now)
-      setUser({ username: 'user', role: 'user' });
-    }
+    // Check for token in localStorage and validate with backend
+    const validateToken = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setIsLoading(false);
+        return;
+      }
+      
+      try {
+        // Get user data from backend
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Token validation failed:", error);
+        localStorage.removeItem('token');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    validateToken();
   }, []);
   
   const login = (token, userData) => {
@@ -36,11 +54,16 @@ function App() {
     setUser(null);
   };
 
+  if (isLoading) {
+    return <div className="loading-container">Загрузка...</div>;
+  }
+
   return (
     <Router>
       <Routes>
-        <Route path="/" element={<Main user={user} />} />
-        <Route path="/car/:id" element={<CarDetails />} />
+        <Route path="/" element={<Main user={user} onLogout={logout} />} />
+        <Route path="/car/:id" element={<CarDetails user={user} />} />
+        <Route path="/search" element={<SearchResults user={user} onLogout={logout} />} />
         <Route path="/login" element={
           isAuthenticated ? <Navigate to="/" /> : <Login onLogin={login} />
         } />
@@ -54,7 +77,7 @@ function App() {
         } />
         <Route path="/admin" element={
           <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="admin">
-            <AdminPanel user={user} />
+            <AdminPanel user={user} onLogout={logout} />
           </ProtectedRoute>
         } />
       </Routes>

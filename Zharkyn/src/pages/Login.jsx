@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { authService } from '../services/api';
 import '../styles/pages/Auth.css';
 
 const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   });
   const [error, setError] = useState('');
@@ -27,43 +28,29 @@ const Login = ({ onLogin }) => {
     setLoading(true);
 
     try {
-      // This will be replaced with actual API call later
-      // Mock login for now
-      setTimeout(() => {
-        const mockToken = 'mock-jwt-token';
-        const mockUser = { 
-          id: 1, 
-          username: 'user', 
-          email: formData.email,
-          role: formData.email.includes('admin') ? 'admin' : 'user'
-        };
-        
-        onLogin(mockToken, mockUser);
-        navigate('/');
-        setLoading(false);
-      }, 1000);
+      // Call the login API
+      const data = await authService.login(formData);
       
-      // Real implementation will look like:
-      /*
-      const response = await fetch('http://localhost:8000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Login failed');
+      // Extract user info from token (in a real app, you might want to make a separate request)
+      let userData = { username: formData.email };
+      
+      // If backend is connected, try to get user data
+      try {
+        userData = await authService.getCurrentUser();
+      } catch (userError) {
+        console.error('Failed to get user data', userError);
       }
-
-      const data = await response.json();
-      onLogin(data.access_token, data.user);
+      
+      // Save token and call the onLogin callback
+      onLogin(data.access_token, userData);
       navigate('/');
-      */
     } catch (err) {
-      setError(err.message || 'Login failed. Please try again.');
+      console.error('Login error:', err);
+      setError(
+        err.response?.data?.detail || 
+        'Login failed. Please check your credentials and try again.'
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -80,7 +67,7 @@ const Login = ({ onLogin }) => {
             <div className="form-group">
               <label htmlFor="email">Email</label>
               <input
-                type="email"
+                type="text"
                 id="email"
                 name="email"
                 value={formData.email}

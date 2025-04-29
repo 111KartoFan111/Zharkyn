@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { userService, reviewService } from '../services/api';
 import '../styles/pages/Profile.css';
 
 const Profile = ({ user, onLogout }) => {
@@ -8,8 +9,8 @@ const Profile = ({ user, onLogout }) => {
   const [profileData, setProfileData] = useState({
     username: '',
     email: '',
-    firstName: '',
-    lastName: '',
+    first_name: '',
+    last_name: '',
     phone: ''
   });
   const [favorites, setFavorites] = useState([]);
@@ -19,56 +20,62 @@ const Profile = ({ user, onLogout }) => {
   const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
-    // Fetch user data from API (mock for now)
-    setLoading(true);
-    
-    // Mock user data
-    setTimeout(() => {
-      if (user) {
-        setProfileData({
-          username: user.username || 'Username',
-          email: user.email || 'user@example.com',
-          firstName: 'Иван',
-          lastName: 'Иванов',
-          phone: '+7 (777) 123-4567'
-        });
-        
-        // Mock favorites
-        setFavorites([
-          {
-            id: 1,
-            brand: 'Tesla',
-            model: 'Model 3',
-            price: '20 000 000 ₸',
-            image: 'https://astps-photos-kl.kcdn.kz/webp/c1/c1e1edfc-541f-44d5-85ea-9c8f82b9a4e6/2-full.webp'
-          },
-          {
-            id: 3,
-            brand: 'Mercedes-Benz',
-            model: 'GLE 350',
-            price: '47 000 000 ₸',
-            image: 'https://astps-photos-kl.kcdn.kz/webp/3a/3a3b438d-4784-4e7c-a9fc-9e5d6b423026/16-1200x752.webp'
-          }
-        ]);
-        
-        // Mock reviews
-        setReviews([
-          {
-            id: 1,
-            carId: 2,
-            carBrand: 'Toyota',
-            carModel: 'Camry',
-            rating: 5,
-            comment: 'Отличный автомобиль, очень доволен покупкой!',
-            date: '15.03.2025'
-          }
-        ]);
-      }
+    const fetchProfileData = async () => {
+      if (!user) return;
       
-      setLoading(false);
-    }, 1000);
-    
-    // Real implementation will fetch from API
+      setLoading(true);
+      setError('');
+      
+      try {
+        // Try to fetch user data from API
+        let userData = user;
+        try {
+          userData = await userService.getCurrentUser();
+          setProfileData({
+            username: userData.username || '',
+            email: userData.email || '',
+            first_name: userData.first_name || '',
+            last_name: userData.last_name || '',
+            phone: userData.phone || ''
+          });
+        } catch (err) {
+          console.error('Failed to get user data from API, using local user data', err);
+          // If API fails, use local user data
+          setProfileData({
+            username: user.username || '',
+            email: user.email || '',
+            first_name: user.first_name || '',
+            last_name: user.last_name || '',
+            phone: user.phone || ''
+          });
+        }
+        
+        // Fetch favorites
+        try {
+          const favoritesData = await userService.getFavorites();
+          setFavorites(favoritesData);
+        } catch (err) {
+          console.error('Failed to fetch favorites', err);
+          setFavorites([]);
+        }
+        
+        // Fetch reviews
+        try {
+          const reviewsData = await reviewService.getUserReviews();
+          setReviews(reviewsData);
+        } catch (err) {
+          console.error('Failed to fetch reviews', err);
+          setReviews([]);
+        }
+      } catch (err) {
+        console.error('Error loading profile data', err);
+        setError('Не удалось загрузить данные профиля. Пожалуйста, попробуйте позже.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProfileData();
   }, [user]);
 
   const handleInputChange = (e) => {
@@ -81,26 +88,27 @@ const Profile = ({ user, onLogout }) => {
 
   const handleSaveProfile = async () => {
     try {
-      // Mock API call
       setLoading(true);
       
-      setTimeout(() => {
-        setEditMode(false);
-        setLoading(false);
-      }, 800);
+      await userService.updateProfile(user.id, profileData);
       
-      // Real implementation will update via API
+      setEditMode(false);
     } catch (error) {
-      setError('Failed to update profile');
+      console.error('Failed to update profile', error);
+      setError('Не удалось обновить профиль');
+    } finally {
       setLoading(false);
     }
   };
 
-  const handleRemoveFavorite = (id) => {
-    // Mock removing from favorites
-    setFavorites(prev => prev.filter(car => car.id !== id));
-    
-    // Real implementation will call API
+  const handleRemoveFavorite = async (id) => {
+    try {
+      await userService.removeFavorite(id);
+      setFavorites(prev => prev.filter(car => car.id !== id));
+    } catch (error) {
+      console.error('Failed to remove favorite', error);
+      setError('Не удалось удалить из избранного');
+    }
   };
 
   if (loading && !profileData.username) {
@@ -108,7 +116,7 @@ const Profile = ({ user, onLogout }) => {
       <>
         <Header user={user} onLogout={onLogout} />
         <div className="profile-container">
-          <div className="loading">Loading...</div>
+          <div className="loading">Загрузка...</div>
         </div>
         <Footer />
       </>
@@ -122,7 +130,7 @@ const Profile = ({ user, onLogout }) => {
         <div className="profile-sidebar">
           <div className="profile-avatar">
             <img src="/img/default-avatar.png" alt="Avatar" />
-            <h3>{profileData.firstName} {profileData.lastName}</h3>
+            <h3>{profileData.first_name} {profileData.last_name}</h3>
           </div>
           <ul className="profile-nav">
             <li 
@@ -203,11 +211,11 @@ const Profile = ({ user, onLogout }) => {
                 <div className="form-group">
                   <label>Имя</label>
                   {!editMode ? (
-                    <p>{profileData.firstName}</p>
+                    <p>{profileData.first_name}</p>
                   ) : (
                     <input
-                      name="firstName"
-                      value={profileData.firstName}
+                      name="first_name"
+                      value={profileData.first_name}
                       onChange={handleInputChange}
                       disabled={loading}
                     />
@@ -217,11 +225,11 @@ const Profile = ({ user, onLogout }) => {
                 <div className="form-group">
                   <label>Фамилия</label>
                   {!editMode ? (
-                    <p>{profileData.lastName}</p>
+                    <p>{profileData.last_name}</p>
                   ) : (
                     <input
-                      name="lastName"
-                      value={profileData.lastName}
+                      name="last_name"
+                      value={profileData.last_name}
                       onChange={handleInputChange}
                       disabled={loading}
                     />
@@ -289,7 +297,7 @@ const Profile = ({ user, onLogout }) => {
                   {reviews.map(review => (
                     <div key={review.id} className="review-card">
                       <div className="review-header">
-                        <h3>{review.carBrand} {review.carModel}</h3>
+                        <h3>{review.car.brand} {review.car.model}</h3>
                         <div className="review-rating">
                           {[...Array(5)].map((_, i) => (
                             <span 
@@ -301,11 +309,21 @@ const Profile = ({ user, onLogout }) => {
                           ))}
                         </div>
                       </div>
-                      <p className="review-date">{review.date}</p>
+                      <p className="review-date">{new Date(review.created_at).toLocaleDateString('ru-RU')}</p>
                       <p className="review-comment">{review.comment}</p>
                       <div className="review-actions">
-                        <button className="edit-review">Редактировать</button>
-                        <button className="delete-review">Удалить</button>
+                        <button 
+                          className="edit-review"
+                          onClick={() => {/* Implement edit review functionality */}}
+                        >
+                          Редактировать
+                        </button>
+                        <button 
+                          className="delete-review"
+                          onClick={() => {/* Implement delete review functionality */}}
+                        >
+                          Удалить
+                        </button>
                       </div>
                     </div>
                   ))}

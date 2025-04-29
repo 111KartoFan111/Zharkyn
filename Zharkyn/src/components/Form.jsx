@@ -1,10 +1,12 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import '../styles/Block/Form.css'
+// src/components/Form.jsx
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { carService } from '../services/api';
+import '../styles/Block/Form.css';
 
 const Form = () => {
-  const navigate = useNavigate()
-  const [activeTab, setActiveTab] = useState('new')
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('new');
   const [formData, setFormData] = useState({
     make: '',
     model: '',
@@ -16,9 +18,10 @@ const Form = () => {
     mileageTo: '',
     fuelType: '',
     transmission: ''
-  })
+  });
+  const [loading, setLoading] = useState(false);
 
-  const makes = ['', 'Audi', 'BMW', 'Mercedes', 'Toyota', 'Tesla', 'Hyundai', 'Kia', 'Nissan', 'Lexus']
+  const makes = ['', 'Audi', 'BMW', 'Mercedes', 'Toyota', 'Tesla', 'Hyundai', 'Kia', 'Nissan', 'Lexus'];
   const models = {
     '': [],
     'Audi': ['Q7', 'A4', 'A6', 'Q5'],
@@ -30,7 +33,7 @@ const Form = () => {
     'Kia': ['K5', 'Sportage', 'Sorento', 'Seltos'],
     'Nissan': ['Qashqai', 'X-Trail', 'Juke', 'Leaf'],
     'Lexus': ['RX', 'NX', 'ES', 'UX']
-  }
+  };
   
   const fuelTypes = [
     { value: '', label: 'Все типы' },
@@ -39,7 +42,7 @@ const Form = () => {
     { value: 'hybrid', label: 'Гибрид' },
     { value: 'electric', label: 'Электро' },
     { value: 'gas', label: 'Газ' }
-  ]
+  ];
   
   const transmissions = [
     { value: '', label: 'Все типы' },
@@ -47,17 +50,18 @@ const Form = () => {
     { value: 'automatic', label: 'Автомат' },
     { value: 'robot', label: 'Робот' },
     { value: 'variator', label: 'Вариатор' }
-  ]
+  ];
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
-    }))
-  }
+    }));
+  };
 
-  const handleSearch = () => {
+  // Open in Kolesa.kz site
+  const handleExternalSearch = () => {
     const baseUrl = 'https://kolesa.kz/cars/';
     const searchParams = new URLSearchParams();
 
@@ -90,9 +94,53 @@ const Form = () => {
     window.open(fullUrl, '_blank');
   };
 
-  // In the future, this could fetch results from the backend API
-  const handleLocalSearch = () => {
-    navigate('/search', { state: { filters: formData, activeTab } });
+  // Search using the backend API
+  const handleBackendSearch = async () => {
+    setLoading(true);
+    
+    try {
+      // Convert form data to API filter format
+      const filterData = {
+        brand: formData.make,
+        model: formData.model,
+        category: activeTab === 'new' ? 'New Car' : 'Used Car',
+        price_from: formData.priceFrom,
+        price_to: formData.priceTo,
+        year_from: formData.yearFrom,
+        year_to: formData.yearTo,
+        mileage_from: formData.mileageFrom,
+        mileage_to: formData.mileageTo,
+        engine_type: formData.fuelType,
+        transmission: formData.transmission
+      };
+      
+      // Call the search API
+      const results = await carService.searchCars(filterData);
+      
+      // Store results in localStorage for the search results page
+      localStorage.setItem('searchResults', JSON.stringify(results));
+      localStorage.setItem('searchFilters', JSON.stringify(filterData));
+      
+      // Navigate to search results page (you'd need to create this page)
+      navigate('/search');
+    } catch (error) {
+      console.error('Search failed:', error);
+      // Fallback to external search if backend fails
+      handleExternalSearch();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    // Try backend search first (if backend is available)
+    // Otherwise fall back to external site
+    try {
+      handleBackendSearch();
+    } catch (error) {
+      console.error('Backend search failed, falling back to external search', error);
+      handleExternalSearch();
+    }
   };
 
   return (
@@ -268,12 +316,13 @@ const Form = () => {
         <button
           className="search-button"
           onClick={handleSearch}
+          disabled={loading}
         >
-          Найти
+          {loading ? 'Поиск...' : 'Найти'}
         </button>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Form
+export default Form;

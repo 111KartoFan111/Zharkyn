@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { authService } from '../services/api';
 import '../styles/pages/Auth.css';
 
 const Register = () => {
@@ -9,7 +10,10 @@ const Register = () => {
     username: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    first_name: '',
+    last_name: '',
+    phone: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -36,36 +40,28 @@ const Register = () => {
     setLoading(true);
 
     try {
-      // This will be replaced with actual API call later
-      // Mock registration for now
-      setTimeout(() => {
-        setLoading(false);
-        navigate('/login');
-      }, 1000);
+      // Create user data object (excluding confirmPassword which is not needed for API)
+      const userData = {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        first_name: formData.first_name,
+        last_name: formData.last_name,
+        phone: formData.phone
+      };
       
-      // Real implementation will look like:
-      /*
-      const response = await fetch('http://localhost:8000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          username: formData.username,
-          email: formData.email,
-          password: formData.password
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'Registration failed');
-      }
-
+      // Call register API
+      await authService.register(userData);
+      
+      // Redirect to login on success
       navigate('/login');
-      */
     } catch (err) {
-      setError(err.message || 'Registration failed. Please try again.');
+      console.error('Registration error:', err);
+      setError(
+        err.response?.data?.detail || 
+        'Регистрация не удалась. Пожалуйста, попробуйте еще раз.'
+      );
+    } finally {
       setLoading(false);
     }
   };
@@ -100,6 +96,39 @@ const Register = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="first_name">Имя</label>
+              <input
+                type="text"
+                id="first_name"
+                name="first_name"
+                value={formData.first_name}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="last_name">Фамилия</label>
+              <input
+                type="text"
+                id="last_name"
+                name="last_name"
+                value={formData.last_name}
+                onChange={handleChange}
+              />
+            </div>
+            
+            <div className="form-group">
+              <label htmlFor="phone">Телефон</label>
+              <input
+                type="tel"
+                id="phone"
+                name="phone"
+                value={formData.phone}
+                onChange={handleChange}
               />
             </div>
             

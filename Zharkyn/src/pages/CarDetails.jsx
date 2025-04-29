@@ -4,11 +4,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { carService, reviewService, userService } from '../services/api';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import '../styles/pages/CarDetails.css';
-import carData from '../carData.json';
 
 const CarDetails = ({ user }) => {
   const { id } = useParams();
@@ -25,55 +25,57 @@ const CarDetails = ({ user }) => {
   const [showReviewForm, setShowReviewForm] = useState(false);
 
   useEffect(() => {
-    // Fetch car details (using mock data for now)
-    setLoading(true);
-    
-    setTimeout(() => {
-      const foundCar = carData.cars.find(c => c.id === parseInt(id));
+    const fetchCarData = async () => {
+      setLoading(true);
+      setError('');
       
-      if (foundCar) {
-        setCar(foundCar);
-        // Mock reviews
-        setReviews([
-          {
-            id: 1,
-            userId: 2,
-            username: 'Алексей',
-            rating: 5,
-            comment: 'Отличный автомобиль! Я очень доволен покупкой.',
-            date: '12.03.2025'
-          },
-          {
-            id: 2,
-            userId: 3,
-            username: 'Мария',
-            rating: 4,
-            comment: 'Хороший автомобиль, но есть некоторые недостатки в комплектации.',
-            date: '05.03.2025'
-          }
-        ]);
+      try {
+        // Fetch car details
+        const carData = await carService.getCarById(id);
+        setCar(carData);
         
-        // Check if car is in favorites (mock)
-        setIsFavorite(Math.random() > 0.5);
-      } else {
-        setError('Автомобиль не найден');
+        // Fetch reviews
+        const reviewsData = await reviewService.getCarReviews(id);
+        setReviews(reviewsData);
+        
+        // Check if car is in favorites (only if user is logged in)
+        if (user) {
+          try {
+            const favorites = await userService.getFavorites();
+            setIsFavorite(favorites.some(fav => fav.id === parseInt(id)));
+          } catch (err) {
+            console.error('Failed to check favorites status', err);
+          }
+        }
+      } catch (err) {
+        console.error('Error fetching car details', err);
+        setError('Не удалось загрузить данные об автомобиле');
+      } finally {
+        setLoading(false);
       }
-      
-      setLoading(false);
-    }, 800);
+    };
     
-    // Real implementation will fetch from API
-  }, [id]);
+    fetchCarData();
+  }, [id, user]);
 
-  const handleFavoriteToggle = () => {
+  const handleFavoriteToggle = async () => {
     if (!user) {
       // Redirect to login if not authenticated
       navigate('/login');
       return;
     }
     
-    setIsFavorite(prev => !prev);
-    // Real implementation will call API
+    try {
+      if (isFavorite) {
+        await userService.removeFavorite(id);
+      } else {
+        await userService.addFavorite(id);
+      }
+      setIsFavorite(!isFavorite);
+    } catch (err) {
+      console.error('Failed to update favorites', err);
+      setError('Не удалось обновить избранное');
+    }
   };
 
   const handleReviewChange = (e) => {
@@ -91,7 +93,7 @@ const CarDetails = ({ user }) => {
     }));
   };
 
-  const handleReviewSubmit = (e) => {
+  const handleReviewSubmit = async (e) => {
     e.preventDefault();
     
     if (!user) {
@@ -99,21 +101,27 @@ const CarDetails = ({ user }) => {
       return;
     }
     
-    // Mock adding review
-    const newReview = {
-      id: reviews.length + 1,
-      userId: user?.id || 1,
-      username: user?.username || 'User',
-      rating: reviewForm.rating,
-      comment: reviewForm.comment,
-      date: new Date().toLocaleDateString('ru-RU')
-    };
-    
-    setReviews(prev => [newReview, ...prev]);
-    setReviewForm({ rating: 5, comment: '' });
-    setShowReviewForm(false);
-    
-    // Real implementation will post to API
+    try {
+      const reviewData = {
+        car_id: parseInt(id),
+        rating: reviewForm.rating,
+        comment: reviewForm.comment
+      };
+      
+      const newReview = await reviewService.addReview(reviewData);
+      
+      // Add user data to the new review for display
+      newReview.user = {
+        username: user.username
+      };
+      
+      setReviews(prev => [newReview, ...prev]);
+      setReviewForm({ rating: 5, comment: '' });
+      setShowReviewForm(false);
+    } catch (err) {
+      console.error('Failed to submit review', err);
+      setError('Не удалось отправить отзыв');
+    }
   };
 
   if (loading) {
@@ -121,7 +129,7 @@ const CarDetails = ({ user }) => {
       <>
         <Header user={user} />
         <div className="car-details-container">
-          <div className="loading">Loading...</div>
+          <div className="loading">Загрузка...</div>
         </div>
         <Footer />
       </>
@@ -175,7 +183,7 @@ const CarDetails = ({ user }) => {
             spaceBetween={10}
             slidesPerView={1}
           >
-            {car.gallery.map((img, index) => (
+            {car.gallery && car.gallery.map((img, index) => (
               <SwiperSlide key={index}>
                 <img src={img} alt={`${car.brand} ${car.model} - Image ${index + 1}`} />
               </SwiperSlide>
@@ -192,45 +200,86 @@ const CarDetails = ({ user }) => {
             
             <div className="car-description">
               <h2>Описание</h2>
-              <p>{car.shortDescription}</p>
+              <p>{car.short_description}</p>
             </div>
 
             <div className="car-specifications">
               <h2>Характеристики</h2>
               <div className="specifications-grid">
-                {Object.entries(car.fullCharacteristics).map(([key, value]) => {
-                  // Skip rendering arrays as separate entries in the grid
-                  if (Array.isArray(value)) return null;
-                  
-                  const readableKey = {
-                    year: 'Год выпуска',
-                    bodyType: 'Тип кузова',
-                    engineType: 'Тип двигателя',
-                    driveUnit: 'Привод',
-                    engineVolume: 'Объем двигателя',
-                    fuelConsumption: 'Расход топлива',
-                    color: 'Цвет',
-                    mileage: 'Пробег',
-                    комплектация: 'Комплектация',
-                    batteryCapacity: 'Емкость батареи',
-                    range: 'Запас хода',
-                  }[key] || key;
-
-                  return (
-                    <div key={key} className="specification-item">
-                      <span className="specification-label">{readableKey}:</span>
-                      <span className="specification-value">{value}</span>
-                    </div>
-                  );
-                })}
+                {car.year && (
+                  <div className="specification-item">
+                    <span className="specification-label">Год выпуска:</span>
+                    <span className="specification-value">{car.year}</span>
+                  </div>
+                )}
+                {car.body_type && (
+                  <div className="specification-item">
+                    <span className="specification-label">Тип кузова:</span>
+                    <span className="specification-value">{car.body_type}</span>
+                  </div>
+                )}
+                {car.engine_type && (
+                  <div className="specification-item">
+                    <span className="specification-label">Тип двигателя:</span>
+                    <span className="specification-value">{car.engine_type}</span>
+                  </div>
+                )}
+                {car.drive_unit && (
+                  <div className="specification-item">
+                    <span className="specification-label">Привод:</span>
+                    <span className="specification-value">{car.drive_unit}</span>
+                  </div>
+                )}
+                {car.engine_volume && (
+                  <div className="specification-item">
+                    <span className="specification-label">Объем двигателя:</span>
+                    <span className="specification-value">{car.engine_volume}</span>
+                  </div>
+                )}
+                {car.fuel_consumption && (
+                  <div className="specification-item">
+                    <span className="specification-label">Расход топлива:</span>
+                    <span className="specification-value">{car.fuel_consumption}</span>
+                  </div>
+                )}
+                {car.color && (
+                  <div className="specification-item">
+                    <span className="specification-label">Цвет:</span>
+                    <span className="specification-value">{car.color}</span>
+                  </div>
+                )}
+                {car.mileage && (
+                  <div className="specification-item">
+                    <span className="specification-label">Пробег:</span>
+                    <span className="specification-value">{car.mileage} км</span>
+                  </div>
+                )}
+                {car.battery_capacity && (
+                  <div className="specification-item">
+                    <span className="specification-label">Емкость батареи:</span>
+                    <span className="specification-value">{car.battery_capacity}</span>
+                  </div>
+                )}
+                {car.range && (
+                  <div className="specification-item">
+                    <span className="specification-label">Запас хода:</span>
+                    <span className="specification-value">{car.range}</span>
+                  </div>
+                )}
+                {car.transmission && (
+                  <div className="specification-item">
+                    <span className="specification-label">Коробка передач:</span>
+                    <span className="specification-value">{car.transmission}</span>
+                  </div>
+                )}
               </div>
             </div>
 
-            {car.fullCharacteristics.additionalFeatures && (
+            {car.additional_features && car.additional_features.length > 0 && (
               <div className="car-features">
                 <h2>Дополнительные функции</h2>
                 <ul className="features-list">
-                  {car.fullCharacteristics.additionalFeatures.map((feature, index) => (
+                  {car.additional_features.map((feature, index) => (
                     <li key={index}>{feature}</li>
                   ))}
                 </ul>
@@ -317,8 +366,10 @@ const CarDetails = ({ user }) => {
                   <div key={review.id} className="review-card">
                     <div className="review-top">
                       <div className="reviewer-info">
-                        <span className="reviewer-name">{review.username}</span>
-                        <span className="review-date">{review.date}</span>
+                        <span className="reviewer-name">{review.user?.username || 'Пользователь'}</span>
+                        <span className="review-date">
+                          {new Date(review.created_at).toLocaleDateString('ru-RU')}
+                        </span>
                       </div>
                       <div className="review-rating">
                         {[...Array(5)].map((_, i) => (
@@ -343,4 +394,5 @@ const CarDetails = ({ user }) => {
     </>
   );
 };
+
 export default CarDetails;
