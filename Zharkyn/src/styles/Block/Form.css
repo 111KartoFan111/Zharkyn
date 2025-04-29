@@ -148,7 +148,8 @@
   }
   .car-filter-container {
     display: flex;
-    width: 429px;
+    width: max-content;
+    height: 100%;
     padding: 30px 30px 34px 30px;
     flex-direction: column;
     align-items: center;
