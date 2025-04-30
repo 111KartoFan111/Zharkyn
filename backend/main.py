@@ -10,13 +10,15 @@ import user_routes
 import car_routes
 import review_routes
 import listing_routes
+import blog_routes
+import admin_routes
 
 # Create database tables if they don't exist
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="Car Marketplace API",
-    description="API for a car marketplace with authentication, cars, reviews, and favorites",
+    description="API for a car marketplace with authentication, cars, reviews, blogs, and favorites",
     version="1.0.0"
 )
 
@@ -43,6 +45,8 @@ app.include_router(user_routes.router)
 app.include_router(car_routes.router)
 app.include_router(review_routes.router)
 app.include_router(listing_routes.router)
+app.include_router(blog_routes.router)
+app.include_router(admin_routes.router)
 
 # Serve static files if uploads directory exists
 if os.path.exists("uploads"):

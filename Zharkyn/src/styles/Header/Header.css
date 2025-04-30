@@ -32,5 +32,5 @@ a{
     font-weight: bolder;
 }
 .active{
-    color: white !important;
+    color: white;
 }

@@ -1,6 +1,7 @@
 // src/components/admin/AdminBlogs.jsx
 import React, { useState, useEffect } from 'react';
 import { blogService } from '../../services/api';
+import '../../styles/pages/AdminPanel.css';
 
 const AdminBlogs = () => {
   const [blogs, setBlogs] = useState([]);

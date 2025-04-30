@@ -181,6 +181,21 @@ async def update_listing(
     for key, value in update_data.items():
         setattr(db_listing, key, value)
     
+    # If status changes to rejected, we need to remove the car_id reference
+    if db_listing.status == "rejected" and db_listing.car_id is not None:
+        # Check if there's a car created from this listing
+        car = db.query(models.Car).filter(models.Car.id == db_listing.car_id).first()
+        if car:
+            # Remove the car (option 1) or just remove the reference (option 2)
+            # Option 1: Remove the car
+            db.delete(car)
+            
+            # Option 2: Just remove the reference
+            # db_listing.car_id = None
+        
+        # Clear the car_id field
+        db_listing.car_id = None
+    
     db.commit()
     db.refresh(db_listing)
     
@@ -205,6 +220,13 @@ async def delete_listing(
             detail="Not enough permissions to delete this listing"
         )
     
+    # If there's a car created from this listing, we need to handle it
+    if db_listing.car_id is not None:
+        # Option 1: Delete the car as well (if the car was created from this listing)
+        car = db.query(models.Car).filter(models.Car.id == db_listing.car_id).first()
+        if car and car.external_id and car.external_id == f"listing_{listing_id}":
+            db.delete(car)
+    
     # Delete the listing
     db.delete(db_listing)
     db.commit()
@@ -228,6 +250,66 @@ async def moderate_listing(
     db_listing.status = moderation.status
     db_listing.moderator_id = current_user.id
     db_listing.moderator_comment = moderation.moderator_comment
+    
+    # If listing is approved, create a car entry or update existing one
+    if moderation.status == "approved":
+        # Check if car with this listing_id as external_id already exists
+        existing_car = db.query(models.Car).filter(models.Car.external_id == f"listing_{listing_id}").first()
+        
+        if existing_car:
+            # Update existing car
+            existing_car.brand = db_listing.brand
+            existing_car.model = db_listing.model
+            existing_car.category = db_listing.category
+            existing_car.price = db_listing.price
+            existing_car.shortDescription = db_listing.short_description
+            existing_car.image = db_listing.image
+            existing_car.gallery = db_listing.gallery
+            existing_car.year = db_listing.year
+            existing_car.body_type = db_listing.body_type
+            existing_car.engine_type = db_listing.engine_type
+            existing_car.drive_unit = db_listing.drive_unit
+            existing_car.transmission = db_listing.transmission
+            existing_car.color = db_listing.color
+            existing_car.mileage = db_listing.mileage
+            existing_car.additional_features = db_listing.additional_features
+            
+            # Link car to listing if not already linked
+            db_listing.car_id = existing_car.id
+        else:
+            # Create a new car from the listing data
+            new_car = models.Car(
+                brand=db_listing.brand,
+                model=db_listing.model,
+                category=db_listing.category,
+                price=db_listing.price,
+                shortDescription=db_listing.short_description,
+                image=db_listing.image,
+                gallery=db_listing.gallery,
+                year=db_listing.year,
+                body_type=db_listing.body_type,
+                engine_type=db_listing.engine_type,
+                drive_unit=db_listing.drive_unit,
+                transmission=db_listing.transmission,
+                color=db_listing.color,
+                mileage=db_listing.mileage,
+                additional_features=db_listing.additional_features,
+                external_id=f"listing_{listing_id}"  # Store the reference to the original listing
+            )
+            
+            db.add(new_car)
+            db.flush()  # Flush to get the ID of the new car
+            
+            # Link the car to the listing
+            db_listing.car_id = new_car.id
+    elif moderation.status == "rejected" and db_listing.car_id is not None:
+        # If listing is rejected but a car was created, remove the car
+        car = db.query(models.Car).filter(models.Car.id == db_listing.car_id).first()
+        if car:
+            db.delete(car)
+        
+        # Clear the car_id field
+        db_listing.car_id = None
     
     db.commit()
     db.refresh(db_listing)

@@ -19,6 +19,8 @@ class UserUpdate(BaseModel):
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     phone: Optional[str] = None
+    role: Optional[str] = None
+    is_active: Optional[bool] = None
     
 class UserInDB(UserBase):
     id: int
@@ -59,6 +61,7 @@ class CarCreate(CarBase):
     range: Optional[str] = None
     transmission: Optional[str] = None
     additional_features: Optional[List[str]] = []
+    external_id: Optional[str] = None
 
 class CarUpdate(BaseModel):
     brand: Optional[str] = None
@@ -80,6 +83,7 @@ class CarUpdate(BaseModel):
     range: Optional[str] = None
     transmission: Optional[str] = None
     additional_features: Optional[List[str]] = None
+    external_id: Optional[str] = None
 
 class CarInDB(CarBase):
     id: int
@@ -98,6 +102,7 @@ class CarInDB(CarBase):
     additional_features: List[str] = []
     created_at: datetime
     updated_at: datetime
+    external_id: Optional[str] = None
     
     class Config:
         orm_mode = True
@@ -169,3 +174,137 @@ class Token(BaseModel):
 class TokenData(BaseModel):
     username: Optional[str] = None
     role: Optional[str] = None
+
+# Blog schemas
+class BlogBase(BaseModel):
+    title: str
+    shortDescription: str
+    fullContent: str
+    image: str
+    readTime: str
+
+class BlogCreate(BlogBase):
+    pass
+
+class BlogUpdate(BaseModel):
+    title: Optional[str] = None
+    shortDescription: Optional[str] = None
+    fullContent: Optional[str] = None
+    image: Optional[str] = None
+    readTime: Optional[str] = None
+    status: Optional[str] = None
+
+class BlogModeration(BaseModel):
+    status: str  # "approved" or "rejected"
+    moderator_comment: Optional[str] = None
+
+class BlogInDB(BlogBase):
+    id: int
+    author_id: int
+    views: int
+    likes_count: int
+    status: str
+    moderator_id: Optional[int] = None
+    moderator_comment: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        orm_mode = True
+
+# Comment schemas
+class CommentBase(BaseModel):
+    content: str
+
+class CommentCreate(CommentBase):
+    pass
+
+class CommentInDB(CommentBase):
+    id: int
+    blog_id: int
+    user_id: int
+    created_at: datetime
+    updated_at: datetime
+    
+    class Config:
+        orm_mode = True
+
+class Comment(CommentInDB):
+    user: User
+    
+    class Config:
+        orm_mode = True
+
+class Blog(BlogInDB):
+    author: User
+    comments: Optional[List[Comment]] = []
+    liked_by: Optional[List[User]] = []
+    user_has_liked: Optional[bool] = False
+    
+    class Config:
+        orm_mode = True
+
+# Listing schemas
+class ListingBase(BaseModel):
+    brand: str
+    model: str
+    year: int
+    price: str
+    category: str
+    body_type: str
+    engine_type: str
+    drive_unit: str
+    color: str
+    mileage: Optional[int] = None
+    transmission: str
+    short_description: str
+    image: str
+
+class ListingCreate(ListingBase):
+    gallery: List[str] = []
+    additional_features: List[str] = []
+
+class ListingUpdate(BaseModel):
+    brand: Optional[str] = None
+    model: Optional[str] = None
+    year: Optional[int] = None
+    price: Optional[str] = None
+    category: Optional[str] = None
+    body_type: Optional[str] = None
+    engine_type: Optional[str] = None
+    drive_unit: Optional[str] = None
+    color: Optional[str] = None
+    mileage: Optional[int] = None
+    transmission: Optional[str] = None
+    short_description: Optional[str] = None
+    image: Optional[str] = None
+    gallery: Optional[List[str]] = None
+    additional_features: Optional[List[str]] = None
+    status: Optional[str] = None
+
+class ListingModeration(BaseModel):
+    status: str  # "approved" or "rejected"
+    moderator_comment: Optional[str] = None
+
+class ListingInDB(ListingBase):
+    id: int
+    creator_id: int
+    gallery: List[str]
+    additional_features: List[str]
+    status: str
+    moderator_id: Optional[int] = None
+    moderator_comment: Optional[str] = None
+    created_at: datetime
+    updated_at: datetime
+    car_id: Optional[int] = None
+    
+    class Config:
+        orm_mode = True
+
+class Listing(ListingInDB):
+    creator: User
+    moderator: Optional[User] = None
+    car: Optional[Car] = None
+    
+    class Config:
+        orm_mode = True

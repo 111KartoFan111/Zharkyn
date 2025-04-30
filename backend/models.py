@@ -76,6 +76,7 @@ class Car(Base):
     additional_features = Column(ARRAY(String))
     created_at = Column(DateTime, default=datetime.utcnow, index=True)  # Indexed for sorting by newest
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    external_id = Column(String, unique=True, index=True, nullable=True)  # Reference to original listing or external system
 
     # Relationships
     favorited_by = relationship("User", secondary=favorites, back_populates="favorites")
@@ -133,10 +134,12 @@ class Listing(Base):
     moderator_comment = Column(String, nullable=True)
     created_at = Column(DateTime, default=datetime.utcnow, index=True)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    car_id = Column(Integer, ForeignKey("cars.id"), nullable=True)  # Reference to approved car in cars table
 
     # Relationships
     creator = relationship("User", foreign_keys=[creator_id], back_populates="listings")
     moderator = relationship("User", foreign_keys=[moderator_id])
+    car = relationship("Car", foreign_keys=[car_id])
 
     # Index for status + creation date to quickly find pending listings, sorted by newest
     __table_args__ = (
