@@ -111,10 +111,6 @@ const FeaturedMain = () => {
       if (activeFilter) {
         filters.category = activeFilter;
       }
-      
-      // Approved cars only
-      filters.status = 'approved';
-      
       // Get cars from API
       const carsData = await carService.getCars(filters);
       setCars(carsData);

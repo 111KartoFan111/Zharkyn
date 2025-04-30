@@ -44,7 +44,7 @@ class CarBase(BaseModel):
     model: str
     category: str
     price: str
-    short_description: str
+    shortDescription: str
     image: str
 
 class CarCreate(CarBase):
@@ -68,7 +68,7 @@ class CarUpdate(BaseModel):
     model: Optional[str] = None
     category: Optional[str] = None
     price: Optional[str] = None
-    short_description: Optional[str] = None
+    shortDescription: Optional[str] = None
     image: Optional[str] = None
     gallery: Optional[List[str]] = None
     year: Optional[int] = None

@@ -107,7 +107,6 @@ const RecentlyAdded = () => {
     try {
       // Create filter parameters
       const filters = {
-        status: 'approved', // Only approved cars
         sort_by: 'created_at', // Sort by creation date
         sort_order: 'desc', // Newest first
         limit: 9 // Limit to 9 cars

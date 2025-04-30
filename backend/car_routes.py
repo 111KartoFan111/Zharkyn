@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from sqlalchemy import and_
+from typing import Dict, Any
 
 import schemas
 import models
@@ -70,7 +71,7 @@ async def create_car(
         model=car.model,
         category=car.category,
         price=car.price,
-        short_description=car.short_description,
+        short_description=car.shortDescription,
         image=car.image,
         gallery=car.gallery,
         year=car.year,
@@ -132,22 +133,6 @@ async def delete_car(
     db.delete(db_car)
     db.commit()
     return None
-
-from fastapi import APIRouter, Depends, HTTPException, status, Query
-from sqlalchemy.orm import Session
-from typing import List, Optional, Dict, Any
-from sqlalchemy import and_
-from pydantic import BaseModel
-
-import schemas
-import models
-import auth
-from database import get_db
-
-router = APIRouter(
-    prefix="/cars",
-    tags=["cars"]
-)
 
 @router.post("/search", response_model=List[schemas.Car])
 async def search_cars(

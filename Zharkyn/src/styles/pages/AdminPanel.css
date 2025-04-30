@@ -346,11 +346,11 @@
     }
   }
 
-  .blog-image-cell {
+  .blog-image-cell, .listing-image-cell {
     width: 100px;
   }
   
-  .blog-image-cell img {
+  .blog-image-cell img, .listing-image-cell img {
     width: 100px;
     height: 80px;
     object-fit: cover;

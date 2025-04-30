@@ -35,7 +35,7 @@ const AdminCars = () => {
   const fetchCars = async () => {
     setLoading(true);
     try {
-      const carsData = await adminService.getAllListings();
+      const carsData = await adminService.getAllCars();
       setCars(carsData);
     } catch (err) {
       console.error('Failed to fetch cars:', err);
