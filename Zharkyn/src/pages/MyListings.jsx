@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { carService } from '../services/api';
+import '../styles/pages/AddListing.css'; // Reusing the existing styles
 
 const MyListings = ({ user, onLogout }) => {
   const navigate = useNavigate();

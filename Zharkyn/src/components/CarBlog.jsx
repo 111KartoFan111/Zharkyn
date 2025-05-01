@@ -45,30 +45,52 @@ const CarBlog = () => {
         ) : blogs.length === 0 ? (
           <div className="no-blogs-message">Нет доступных блогов</div>
         ) : (
-          <Swiper modules={[Navigation]} navigation={true} className="mySwiper">
-            <SwiperSlide>
-              <div className='BlogGap'>
-                {blogs.map((blog) => (
-                  <div
-                    key={blog.id}
-                    className='BlogItem'
-                    onClick={() => navigate(`/blog/${blog.id}`)}
-                  >
-                    <div className='BlogItemImg'>
-                      <img src={blog.image} alt={blog.title} />
-                    </div>
-                    <div className='BlogItemTitle'>
-                      <p>{blog.author.username}</p>
-                      <div className='rectangle'></div>
-                      <p>{new Date(blog.created_at).toLocaleDateString()}</p>
-                    </div>
-                    <div className='BlogItemText'>
-                      <h3>{blog.title}</h3>
-                    </div>
+          <Swiper
+            modules={[Navigation, Pagination, Scrollbar, A11y]}
+            navigation={true}
+            pagination={{ clickable: true }}
+            scrollbar={{ draggable: true }}
+            spaceBetween={20}
+            slidesPerView={3}
+            breakpoints={{
+              // Mobile small (≤480px)
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+              },
+              // Mobile large (≤768px)
+              481: {
+                slidesPerView: 2,
+                spaceBetween: 15,
+              },
+              // Tablet and above (>768px)
+              769: {
+                slidesPerView: 3,
+                spaceBetween: 20,
+              },
+            }}
+            className="mySwiper"
+          >
+            {blogs.map((blog) => (
+              <SwiperSlide key={blog.id}>
+                <div
+                  className='BlogItem'
+                  onClick={() => navigate(`/blog/${blog.id}`)}
+                >
+                  <div className='BlogItemImg'>
+                    <img src={blog.image} alt={blog.title} />
                   </div>
-                ))}
-              </div>
-            </SwiperSlide>
+                  <div className='BlogItemTitle'>
+                    <p>{blog.author.username}</p>
+                    <div className='rectangle'></div>
+                    <p>{new Date(blog.created_at).toLocaleDateString()}</p>
+                  </div>
+                  <div className='BlogItemText'>
+                    <h3>{blog.title}</h3>
+                  </div>
+                </div>
+              </SwiperSlide>
+            ))}
           </Swiper>
         )}
       </div>

@@ -1,7 +1,7 @@
-.AllBrand{
+/* Base styles for larger screens */
+.AllBrand {
     display: flex;
     margin-top: 120px;
-    width: 100%;
     height: 185px;
     flex-direction: column;
     justify-content: center;
@@ -9,7 +9,8 @@
     gap: 25px;
     flex-shrink: 0;
 }
-.BrandTitle{
+
+.BrandTitle {
     display: flex;
     width: 100%;
     height: 40px;
@@ -18,7 +19,8 @@
     padding-left: 150px;
     padding-right: 150px;
 }
-.BrandTitle h1{
+
+.BrandTitle h1 {
     color: var(--color-header);
     font-family: var(--font-dm);
     font-size: 40px;
@@ -26,12 +28,14 @@
     font-weight: 700;
     line-height: 40px; /* 100% */
 }
-.Brand{
+
+.Brand {
     display: flex;
     align-items: center;
     gap: 20px;
 }
-.BrandItem{
+
+.BrandItem {
     display: flex;
     width: 70px;
     padding: 26px 43px 10px 43px;
@@ -43,11 +47,13 @@
     background: #FFF;
     height: 100px;
 }
-.BrandImg{
+
+.BrandImg {
     width: 50px;
     height: 50px;
 }
-.BrandItem h3{
+
+.BrandItem h3 {
     color: #050B20;
     text-align: center;
     font-family: var(--font-dm);
@@ -56,10 +62,76 @@
     font-weight: 500;
     line-height: 21.6px; /* 120% */
 }
-.BrandItem:hover{
+
+.BrandItem:hover {
     border: 2px solid var(--color-header);
     background-color: #E9E9E9;
 }
+
 .BrandItem.selected {
     background-color: #e0e0e0;
-  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .AllBrand {
+        margin-top: 60px;
+        height: auto;
+        padding: 20px;
+    }
+
+    .BrandTitle {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .BrandTitle h1 {
+        font-size: 28px;
+        line-height: 32px;
+    }
+
+    .Brand {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 15px;
+    }
+
+    .BrandItem {
+        width: 60px;
+        height: 80px;
+        padding: 15px;
+    }
+
+    .BrandImg {
+        width: 40px;
+        height: 40px;
+    }
+
+    .BrandItem h3 {
+        font-size: 14px;
+        line-height: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .BrandTitle h1 {
+        font-size: 24px;
+        line-height: 28px;
+    }
+
+    .BrandItem {
+        width: 90px;
+        height: 70px;
+        padding: 10px;
+    }
+
+    .BrandImg {
+        width: 30px;
+        height: 30px;
+    }
+
+    .BrandItem h3 {
+        font-size: 12px;
+        line-height: 14px;
+    }
+}

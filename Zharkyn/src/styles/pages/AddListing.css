@@ -903,3 +903,15 @@
   .load-more-button:hover {
     background-color: #e5e7eb;
   }
+  @media screen and (max-width: 768px) {
+    .blog-tabs,.admin-tabs {
+      flex-direction: column;
+    }
+    
+    .blog-tab {
+      width: 100%;
+    }
+    .listings-table-container , .blogs-table-container{
+      overflow-x: auto;
+    }
+  }

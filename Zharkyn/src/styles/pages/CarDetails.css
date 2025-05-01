@@ -16,6 +16,7 @@
     margin: 0 0 10px 0;
     font-size: 32px;
     color: var(--color-header);
+    word-break: break-word;
   }
   
   .car-category {
@@ -376,6 +377,9 @@
   }
   
   @media (max-width: 768px) {
+    .car-details-header{
+      flex-direction: column;
+    }
     .car-details-content {
       grid-template-columns: 1fr;
     }

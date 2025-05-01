@@ -8,6 +8,7 @@ import Profile from './pages/Profile';
 import CarDetails from './pages/CarDetails';
 import AdminPanel from './pages/AdminPanel';
 import AddListing from './pages/AddListing';
+import MyListings from './pages/MyListings';
 import SearchResults from './pages/SearchResults';
 import BlogList from './pages/BlogList.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
@@ -91,6 +92,11 @@ function App() {
             <AddListing user={user} onLogout={logout} />
           </ProtectedRoute>
         } />
+        <Route path="/my-listings" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <MyListings user={user} onLogout={logout} />
+          </ProtectedRoute>
+        } />
         
         {/* Blog routes */}
         <Route path="/blogs" element={<BlogList user={user} onLogout={logout} />} />
@@ -105,6 +111,7 @@ function App() {
             <CreateBlog user={user} onLogout={logout} />
           </ProtectedRoute>
         } />
+        
         {/* Admin routes */}
         <Route path="/admin" element={
           <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="admin" user={user}>

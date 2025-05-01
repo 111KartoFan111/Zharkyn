@@ -9,7 +9,6 @@ import '../styles/Main.css'
 import CarBlog from './CarBlog'
 import AutoLoanCalculator from './AutoLoanCalculator'
 import Footer from './Footer.jsx'
-import CarModel from './CarModel'
 
 
 const Main = () => {
