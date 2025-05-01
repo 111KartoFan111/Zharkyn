@@ -1,33 +1,135 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+// src/components/FeaturedMain.jsx
+import React, { useState, useEffect } from 'react'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
-import '../styles/Block/FeaturedMain.css';
+import '../styles/Block/FeaturedMain.css'
+import '../styles/Block/Responsive.css'; // Import new responsive styles
 import { carService } from '../services/api';
+
+const CarDetailsModal = ({ car, onClose }) => {
+  if (!car) return null;
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        <button className="modal-close" onClick={onClose}>×</button>
+        <div className="modal-header">
+          <h2>{car.brand} {car.model}</h2>
+          <p>{car.shortDescription}</p>
+        </div>
+
+        <div className="modal-body">
+          <div className="modal-gallery">
+            <Swiper
+              modules={[Navigation, Pagination]}
+              navigation
+              pagination={{ clickable: true }}
+              spaceBetween={10}
+              slidesPerView={1}
+            >
+              {car.gallery && car.gallery.map((img, index) => (
+                <SwiperSlide key={index}>
+                  <img src={img} alt={`${car.brand} ${car.model} - Image ${index + 1}`} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
+          <div className="modal-characteristics">
+            <h3>Характеристики</h3>
+            <div className="characteristics-grid">
+              {car.fullCharacteristics && Object.entries(car.fullCharacteristics).map(([key, value]) => {
+                // Skip if value is an array (additionalFeatures)
+                if (Array.isArray(value)) return null;
+                
+                const readableKey = {
+                  year: 'Год выпуска',
+                  bodyType: 'Тип кузова',
+                  engineType: 'Тип двигателя',
+                  transmission: 'Трансмиссия',
+                  driveUnit: 'Привод',
+                  acceleration: 'Разгон',
+                  maxSpeed: 'Максимальная скорость',
+                  batteryCapacity: 'Емкость батареи',
+                  range: 'Запас хода',
+                  powerReserve: 'Зарядка',
+                  engineVolume: 'Объем двигателя',
+                  fuelConsumption: 'Расход топлива',
+                  color: 'Цвет',
+                  interior: 'Интерьер',
+                  mileage: 'Пробег',
+                }[key] || key;
+
+                return (
+                  <div key={key} className="characteristic-item">
+                    <span className="characteristic-label">{readableKey}:</span>
+                    <span className="characteristic-value">{value}</span>
+                  </div>
+                );
+              })}
+              
+              {car.fullCharacteristics && car.fullCharacteristics.additionalFeatures && (
+                <div className="characteristic-item full-width">
+                  <span className="characteristic-label">Дополнительные функции:</span>
+                  <div className="characteristic-value feature-list">
+                    {car.fullCharacteristics.additionalFeatures.join(', ')}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="modal-footer">
+          <div className="price">{car.price}</div>
+          <a href={`/car/${car.id}`}>
+            <button className="contact-button">Подробнее</button>
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const FeaturedMain = () => {
   const [activeFilter, setActiveFilter] = useState(localStorage.getItem('featuredFilter') || '');
-  // Removed selectedCar state as modal is no longer used
+  const [selectedCar, setSelectedCar] = useState(null);
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
+  const [slidesPerView, setSlidesPerView] = useState(1);
 
   useEffect(() => {
     fetchCars();
+    
+    // Add responsive handler for slider
+    const handleResize = () => {
+      if (window.innerWidth >= 1200) {
+        setSlidesPerView(1); // Show one slide with 3 cars per row on desktop
+      } else if (window.innerWidth >= 768) {
+        setSlidesPerView(1); // Show one slide with 2 cars per row on tablet
+      } else {
+        setSlidesPerView(1); // Show one car per slide on mobile
+      }
+    };
+
+    handleResize(); // Set initial value
+    window.addEventListener('resize', handleResize);
+    
+    return () => window.removeEventListener('resize', handleResize);
   }, [activeFilter]);
 
   const fetchCars = async () => {
     setLoading(true);
     try {
+      // Create filter parameters
       const filters = {};
       if (activeFilter) {
         filters.category = activeFilter;
       }
+      // Get cars from API
       const carsData = await carService.getCars(filters);
       setCars(carsData);
     } catch (err) {
@@ -43,14 +145,21 @@ const FeaturedMain = () => {
     localStorage.setItem('featuredFilter', filter);
   };
 
-  const carSlides = cars.reduce((acc, car, index) => {
-    const slideIndex = Math.floor(index / 3);
-    if (!acc[slideIndex]) {
-      acc[slideIndex] = [];
-    }
-    acc[slideIndex].push(car);
-    return acc;
-  }, []);
+  // Create slides with 3 cars per slide for desktop, 2 for tablet, 1 for mobile
+  const getCarSlides = () => {
+    const itemsPerSlide = window.innerWidth >= 1200 ? 3 : window.innerWidth >= 768 ? 2 : 1;
+    
+    return cars.reduce((acc, car, index) => {
+      const slideIndex = Math.floor(index / itemsPerSlide);
+      if (!acc[slideIndex]) {
+        acc[slideIndex] = [];
+      }
+      acc[slideIndex].push(car);
+      return acc;
+    }, []);
+  };
+
+  const carSlides = getCarSlides();
 
   return (
     <div className='FMain'>
@@ -85,21 +194,34 @@ const FeaturedMain = () => {
         ) : (
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
-            spaceBetween={50}
-            slidesPerView={1}
+            spaceBetween={20}
+            slidesPerView={slidesPerView}
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
+            breakpoints={{
+              // when window width is >= 320px
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+              },
+              // when window width is >= 768px
+              768: {
+                slidesPerView: 1,
+                spaceBetween: 20
+              },
+              // when window width is >= 1200px
+              1200: {
+                slidesPerView: 1,
+                spaceBetween: 30
+              }
+            }}
           >
             {carSlides.map((slideItems, slideIndex) => (
               <SwiperSlide key={slideIndex}>
-                <div className='slide-container' style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: '20px'
-                }}>
+                <div className='slide-container'>
                   {slideItems.map((car) => (
-                    <div key={car.id} className='item' style={{ flex: 1 }}>
+                    <div key={car.id} className='item'>
                       <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
                         <div className='filter_state'>
                           <div className='status'>
@@ -125,7 +247,7 @@ const FeaturedMain = () => {
                             <h2>{car.price}</h2>
                           </div>
                           <div className='but'>
-                            <button onClick={() => navigate(`/car/${car.id}`)}>Подробнее</button>
+                            <button onClick={() => setSelectedCar(car)}>Подробнее</button>
                           </div>
                         </div>
                       </div>
@@ -137,9 +259,15 @@ const FeaturedMain = () => {
           </Swiper>
         )}
       </div>
-      {/* Removed CarDetailsModal rendering */}
-    </div>
-  );
-};
 
-export default FeaturedMain;
+      {selectedCar && (
+        <CarDetailsModal
+          car={selectedCar}
+          onClose={() => setSelectedCar(null)}
+        />
+      )}
+    </div>
+  )
+}
+
+export default FeaturedMain

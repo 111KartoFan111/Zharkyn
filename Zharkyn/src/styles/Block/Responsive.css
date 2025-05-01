@@ -1,0 +1,355 @@
+/* src/styles/Block/Responsive.css */
+
+/* Base responsive container */
+.FMain, .RMain {
+    width: 100%;
+    padding: 40px 20px;
+    margin: 60px 0 0 0;
+    box-sizing: border-box;
+  }
+  
+  /* Left title section */
+  .FLeft, .RLeft {
+    width: 100%;
+    max-width: 338px;
+    margin: 40px auto 20px;
+    text-align: center;
+  }
+  
+  .FLeft h2, .RLeft h2 {
+    font-size: 32px;
+    line-height: 36px;
+    white-space: normal;
+  }
+  
+  /* Filter list */
+  .Flist {
+    width: 100%;
+    max-width: 1400px;
+    margin: 15px auto;
+    overflow-x: auto;
+    padding-bottom: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid #E9E9E9;
+  }
+  
+  .Ffilter {
+    margin-bottom: 10px;
+  }
+  
+  .Ffilter h3 {
+    white-space: nowrap;
+    font-size: 14px;
+  }
+  
+  /* Slider container */
+  .Slider {
+    width: 100%;
+    max-width: 1430px;
+    margin: 30px auto;
+  }
+  
+  /* Car item styling */
+  .item {
+    width: 100%;
+    height: auto;
+    min-height: 387px;
+    margin-bottom: 20px;
+  }
+  
+  .banner {
+    width: 100%;
+    height: 0;
+    padding-bottom: 66.66%; /* Maintain aspect ratio */
+    position: relative;
+  }
+  
+  .filter_state, .Rilter_state {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 15px;
+    box-sizing: border-box;
+  }
+  
+  /* Swiper slide container */
+  .slide-container {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  /* Ensure border section maintains consistent width */
+  .border {
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  /* Description section */
+  .descreption {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  /* Make price and button section stack on very small screens */
+  @media screen and (max-width: 375px) {
+    .priceBut {
+      flex-direction: column;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    
+    .but button {
+      width: 100%;
+    }
+  }
+  
+  /* Modal styling for responsive */
+  .modal-content {
+    width: 95%;
+    max-width: 800px;
+    max-height: 90vh;
+    padding: 15px;
+  }
+  
+  .modal-body {
+    flex-direction: column;
+  }
+  
+  .modal-gallery, .modal-characteristics {
+    max-width: 100%;
+    flex: none;
+  }
+  
+  .modal-gallery img {
+    height: auto;
+    max-height: 300px;
+  }
+  
+  .characteristics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  
+  /* Desktop (large screens) */
+  @media screen and (min-width: 1200px) {
+    .FMain, .RMain {
+      padding: 40px;
+      margin: 140px 0 0 0;
+    }
+  
+    .FLeft, .RLeft {
+      margin-left: 150px;
+      margin-top: 115px;
+      text-align: left;
+    }
+  
+    .FLeft h2, .RLeft h2 {
+      font-size: 40px;
+      line-height: 40px;
+    }
+  
+    .Flist {
+      margin-left: 150px;
+      flex-wrap: nowrap;
+      justify-content: flex-start;
+    }
+  
+    .Slider {
+      margin-left: 150px;
+    }
+  
+    .slide-container {
+      flex-direction: row;
+    }
+  
+    .item {
+      flex: 0 0 calc(33.333% - 20px);
+      margin-bottom: 0;
+    }
+    
+    .modal-body {
+      flex-direction: row;
+    }
+  
+    .modal-gallery, .modal-characteristics {
+      max-width: 50%;
+      flex: 1;
+    }
+  }
+  
+  /* Tablet */
+  @media screen and (min-width: 768px) and (max-width: 1199px) {
+    .FMain, .RMain {
+      padding: 30px;
+      margin: 100px 0 0 0;
+    }
+  
+    .FLeft, .RLeft {
+      margin-left: auto;
+      margin-right: auto;
+      margin-top: 60px;
+    }
+  
+    .Flist {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .Slider {
+      margin-left: auto;
+      margin-right: auto;
+    }
+  
+    .slide-container {
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+  
+    .item {
+      flex: 0 0 calc(50% - 10px);
+    }
+    
+    /* Characteristics in two columns for more space */
+    .characteristics-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+    
+    .characteristic-item.full-width {
+      grid-column: span 2;
+    }
+  }
+  
+  /* Mobile */
+  @media screen and (max-width: 767px) {
+    .FMain, .RMain {
+      padding: 20px;
+      margin: 60px 0 0 0;
+    }
+  
+    .FLeft, .RLeft {
+      margin: 40px auto 20px;
+    }
+  
+    .FLeft h2, .RLeft h2 {
+      font-size: 28px;
+      line-height: 32px;
+    }
+  
+    .Ffilter {
+      margin-right: 15px;
+    }
+  
+    .Ffilter h3 {
+      font-size: 12px;
+    }
+  
+    .item {
+      flex: 0 0 100%;
+    }
+  
+    /* Fix navigation buttons for mobile */
+    .Slider .swiper-button-next,
+    .Slider .swiper-button-prev {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .Slider .swiper-button-next:after,
+    .Slider .swiper-button-prev:after {
+      font-size: 14px;
+    }
+    
+    /* Fix modal for mobile */
+    .characteristic-item {
+      flex-direction: column;
+      gap: 5px;
+    }
+    
+    .modal-footer {
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+    }
+    
+    .contact-button {
+      width: 100%;
+    }
+  }
+  
+  /* Fix Swiper specific issues */
+  @media screen and (max-width: 991px) {
+    /* Adjust swiper height for fewer items per slide */
+    .Slider .swiper {
+      height: auto;
+      padding-bottom: 50px; /* More space for pagination */
+    }
+    
+    /* Make sure slides are visible on small screens */
+    .Slider .swiper-slide {
+      height: auto;
+    }
+  }
+  
+  /* Display tweaks for very small screens */
+  @media screen and (max-width: 375px) {
+    .FLeft h2, .RLeft h2 {
+      font-size: 24px;
+    }
+    
+    .Ffilter h3 {
+      font-size: 11px;
+    }
+    
+    .descreptionText {
+      font-size: 12px;
+    }
+    
+    .descreption {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    .descreptionicon {
+      display: none;
+    }
+  }
+  
+  /* Fix horizontal scrolling issues */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100%;
+  }
+  
+  /* Improve loading and error states */
+  .loading-spinner, .error-message, .no-cars-message {
+    padding: 40px;
+    text-align: center;
+    font-family: var(--font-dm);
+    color: #666;
+  }
+  
+  .loading-spinner {
+    font-size: 18px;
+  }
+  
+  .error-message {
+    color: #e74c3c;
+  }
+  
+  /* Improve touch targets on mobile */
+  @media (hover: none) and (pointer: coarse) {
+    .Ffilter h3 {
+      padding: 8px 0;
+    }
+    
+    .but button {
+      padding: 12px 20px;
+    }
+    
+    .FfilterLine {
+      height: 2px;
+    }
+  }
