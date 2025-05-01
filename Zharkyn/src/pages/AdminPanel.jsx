@@ -1,4 +1,3 @@
-// src/pages/AdminPanel.jsx
 import React, { useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -12,17 +11,15 @@ import '../styles/pages/AdminPanel.css';
 const AdminPanel = ({ user, onLogout }) => {
   const [activeTab, setActiveTab] = useState('cars');
 
-  // Redirect if not admin
   if (!user || user.role !== 'admin') {
     return <Navigate to="/" />;
   }
 
   return (
-    <>
+    <div className='PtofileL'>
       <Header user={user} onLogout={onLogout} />
       <div className="admin-container">
         <h1>Панель администратора</h1>
-        
         <div className="admin-tabs">
           <button 
             className={`tab-button ${activeTab === 'cars' ? 'active' : ''}`}
@@ -49,15 +46,13 @@ const AdminPanel = ({ user, onLogout }) => {
             Блоги
           </button>
         </div>
-        
-        {/* Render component based on active tab */}
         {activeTab === 'cars' && <AdminCars />}
         {activeTab === 'users' && <AdminUsers />}
         {activeTab === 'listings' && <AdminListings />}
         {activeTab === 'blogs' && <AdminBlogs />}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

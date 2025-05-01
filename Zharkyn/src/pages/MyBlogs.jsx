@@ -68,7 +68,7 @@ const MyBlogs = ({ user, onLogout }) => {
   };
 
   return (
-    <>
+    <div className="PtofileL">
       <Header user={user} onLogout={onLogout} />
       <div className="my-blogs-container">
         <div className="page-header">
@@ -161,7 +161,7 @@ const MyBlogs = ({ user, onLogout }) => {
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

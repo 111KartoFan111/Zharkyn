@@ -118,19 +118,19 @@ const BlogDetail = ({ user, onLogout }) => {
 
   if (loading) {
     return (
-      <>
+      <div className="main">
         <Header user={user} onLogout={onLogout} />
         <div className="blog-detail-container">
           <div className="loading-spinner">Загрузка блога...</div>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   if (error || !blog) {
     return (
-      <>
+      <div className="main">
         <Header user={user} onLogout={onLogout} />
         <div className="blog-detail-container">
           <div className="error-message">{error || 'Блог не найден'}</div>
@@ -142,12 +142,12 @@ const BlogDetail = ({ user, onLogout }) => {
           </button>
         </div>
         <Footer />
-      </>
+      </div>
     );
   }
 
   return (
-    <>
+    <div className="main">
       <Header user={user} onLogout={onLogout} />
       <div className="blog-detail-container">
         <div className="blog-header">
@@ -257,7 +257,7 @@ const BlogDetail = ({ user, onLogout }) => {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

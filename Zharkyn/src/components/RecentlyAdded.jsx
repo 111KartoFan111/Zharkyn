@@ -7,6 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import '../styles/Block/FeaturedMain.css';
+import '../styles/Block/Responsive.css';
 import { carService } from '../services/api';
 
 const RecentlyAdded = () => {
@@ -23,18 +24,16 @@ const RecentlyAdded = () => {
   const fetchCars = async () => {
     setLoading(true);
     try {
-      // Create filter parameters
       const filters = {
-        sort_by: 'created_at', // Sort by creation date
-        sort_order: 'desc', // Newest first
-        limit: 9 // Limit to 9 cars
+        sort_by: 'created_at',
+        sort_order: 'desc',
+        limit: 9
       };
       
       if (activeFilter) {
         filters.category = activeFilter;
       }
       
-      // Get cars from API
       const carsData = await carService.getCars(filters);
       setCars(carsData);
     } catch (err) {
@@ -49,16 +48,6 @@ const RecentlyAdded = () => {
     setActiveFilter(filter);
     localStorage.setItem('recentPublishedFilter', filter);
   };
-
-  // Create slides with 3 cars per slide
-  const carSlides = cars.reduce((acc, car, index) => {
-    const slideIndex = Math.floor(index / 3);
-    if (!acc[slideIndex]) {
-      acc[slideIndex] = [];
-    }
-    acc[slideIndex].push(car);
-    return acc;
-  }, []);
 
   return (
     <div className='RMain'>
@@ -93,52 +82,57 @@ const RecentlyAdded = () => {
         ) : (
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
-            spaceBetween={50}
-            slidesPerView={1}
+            spaceBetween={20}
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
+            breakpoints={{
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+              },
+              768: {
+                slidesPerView: 2,
+                spaceBetween: 20
+              },
+              1200: {
+                slidesPerView: 3,
+                spaceBetween: 20
+              }
+            }}
           >
-            {carSlides.map((slideItems, slideIndex) => (
-              <SwiperSlide key={slideIndex}>
-                <div className='slide-container' style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: '20px'
-                }}>
-                  {slideItems.map((car) => (
-                    <div key={car.id} className='item' style={{ flex: 1 }}>
-                      <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
-                        <div className='filter_state'>
-                          <div className='status'>
-                            <h4>{car.category === 'New Car' ? 'Новый' : 'В наличии'}</h4>
-                          </div>
-                        </div>
-                      </div>
-                      <div className='border'>
-                        <h3>{car.brand} {car.model}</h3>
-                        <div className='descreption'>
-                          {car.fullCharacteristics && (
-                            <>
-                              <h4 className='descreptionText'>{car.fullCharacteristics.bodyType}</h4>
-                              <div className='descreptionicon'></div>
-                              <h4 className='descreptionText'>{car.fullCharacteristics.engineType}</h4>
-                              <div className='descreptionicon'></div>
-                              <h4 className='descreptionText'>{car.fullCharacteristics.transmission}</h4>
-                            </>
-                          )}
-                        </div>
-                        <div className='priceBut'>
-                          <div className='price'>
-                            <h2>{car.price}</h2>
-                          </div>
-                          <div className='but'>
-                            <button onClick={() => navigate(`/car/${car.id}`)}>Подробнее</button>
-                          </div>
-                        </div>
+            {cars.map((car) => (
+              <SwiperSlide key={car.id}>
+                <div className='item'>
+                  <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
+                    <div className='filter_state'>
+                      <div className='status'>
+                        <h4>{car.category === 'New Car' ? 'Новый' : 'В наличии'}</h4>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                  <div className='border'>
+                    <h3>{car.brand} {car.model}</h3>
+                    <div className='descreption'>
+                      {car.fullCharacteristics && (
+                        <>
+                          <h4 className='descreptionText'>{car.fullCharacteristics.bodyType}</h4>
+                          <div className='descreptionicon'></div>
+                          <h4 className='descreptionText'>{car.fullCharacteristics.engineType}</h4>
+                          <div className='descreptionicon'></div>
+                          <h4 className='descreptionText'>{car.fullCharacteristics.transmission}</h4>
+                        </>
+                      )}
+                    </div>
+                    <div className='priceBut'>
+                      <div className='price'>
+                        <h2>{car.price}</h2>
+                      </div>
+                      <div className='but'>
+                        <button onClick={() => navigate(`/car/${car.id}`)}>Подробнее</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </SwiperSlide>
             ))}

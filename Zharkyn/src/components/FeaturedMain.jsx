@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
 import '../styles/Block/FeaturedMain.css'
-import '../styles/Block/Responsive.css'; // Import new responsive styles
+import '../styles/Block/Responsive.css';
 import { carService } from '../services/api';
 
 const CarDetailsModal = ({ car, onClose }) => {
@@ -42,7 +42,6 @@ const CarDetailsModal = ({ car, onClose }) => {
             <h3>Характеристики</h3>
             <div className="characteristics-grid">
               {car.fullCharacteristics && Object.entries(car.fullCharacteristics).map(([key, value]) => {
-                // Skip if value is an array (additionalFeatures)
                 if (Array.isArray(value)) return null;
                 
                 const readableKey = {
@@ -99,37 +98,18 @@ const FeaturedMain = () => {
   const [cars, setCars] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [slidesPerView, setSlidesPerView] = useState(1);
 
   useEffect(() => {
     fetchCars();
-    
-    // Add responsive handler for slider
-    const handleResize = () => {
-      if (window.innerWidth >= 1200) {
-        setSlidesPerView(1); // Show one slide with 3 cars per row on desktop
-      } else if (window.innerWidth >= 768) {
-        setSlidesPerView(1); // Show one slide with 2 cars per row on tablet
-      } else {
-        setSlidesPerView(1); // Show one car per slide on mobile
-      }
-    };
-
-    handleResize(); // Set initial value
-    window.addEventListener('resize', handleResize);
-    
-    return () => window.removeEventListener('resize', handleResize);
   }, [activeFilter]);
 
   const fetchCars = async () => {
     setLoading(true);
     try {
-      // Create filter parameters
       const filters = {};
       if (activeFilter) {
         filters.category = activeFilter;
       }
-      // Get cars from API
       const carsData = await carService.getCars(filters);
       setCars(carsData);
     } catch (err) {
@@ -144,22 +124,6 @@ const FeaturedMain = () => {
     setActiveFilter(filter);
     localStorage.setItem('featuredFilter', filter);
   };
-
-  // Create slides with 3 cars per slide for desktop, 2 for tablet, 1 for mobile
-  const getCarSlides = () => {
-    const itemsPerSlide = window.innerWidth >= 1200 ? 3 : window.innerWidth >= 768 ? 2 : 1;
-    
-    return cars.reduce((acc, car, index) => {
-      const slideIndex = Math.floor(index / itemsPerSlide);
-      if (!acc[slideIndex]) {
-        acc[slideIndex] = [];
-      }
-      acc[slideIndex].push(car);
-      return acc;
-    }, []);
-  };
-
-  const carSlides = getCarSlides();
 
   return (
     <div className='FMain'>
@@ -195,64 +159,56 @@ const FeaturedMain = () => {
           <Swiper
             modules={[Navigation, Pagination, Scrollbar, A11y]}
             spaceBetween={20}
-            slidesPerView={slidesPerView}
             navigation
             pagination={{ clickable: true }}
             scrollbar={{ draggable: true }}
             breakpoints={{
-              // when window width is >= 320px
               320: {
                 slidesPerView: 1,
                 spaceBetween: 10
               },
-              // when window width is >= 768px
               768: {
-                slidesPerView: 1,
+                slidesPerView: 2,
                 spaceBetween: 20
               },
-              // when window width is >= 1200px
               1200: {
-                slidesPerView: 1,
-                spaceBetween: 30
+                slidesPerView: 3,
+                spaceBetween: 20
               }
             }}
           >
-            {carSlides.map((slideItems, slideIndex) => (
-              <SwiperSlide key={slideIndex}>
-                <div className='slide-container'>
-                  {slideItems.map((car) => (
-                    <div key={car.id} className='item'>
-                      <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
-                        <div className='filter_state'>
-                          <div className='status'>
-                            <h4>{car.category === 'New Car' ? 'Новый' : 'В наличии'}</h4>
-                          </div>
-                        </div>
-                      </div>
-                      <div className='border'>
-                        <h3>{car.brand} {car.model}</h3>
-                        <div className='descreption'>
-                          {car.fullCharacteristics && (
-                            <>
-                              <h4 className='descreptionText'>{car.fullCharacteristics.bodyType}</h4>
-                              <div className='descreptionicon'></div>
-                              <h4 className='descreptionText'>{car.fullCharacteristics.engineType}</h4>
-                              <div className='descreptionicon'></div>
-                              <h4 className='descreptionText'>{car.fullCharacteristics.transmission}</h4>
-                            </>
-                          )}
-                        </div>
-                        <div className='priceBut'>
-                          <div className='price'>
-                            <h2>{car.price}</h2>
-                          </div>
-                          <div className='but'>
-                            <button onClick={() => setSelectedCar(car)}>Подробнее</button>
-                          </div>
-                        </div>
+            {cars.map((car) => (
+              <SwiperSlide key={car.id}>
+                <div className='item'>
+                  <div className='banner' style={{ backgroundImage: `url(${car.image})` }}>
+                    <div className='filter_state'>
+                      <div className='status'>
+                        <h4>{car.category === 'New Car' ? 'Новый' : 'В наличии'}</h4>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                  <div className='border'>
+                    <h3>{car.brand} {car.model}</h3>
+                    <div className='descreption'>
+                      {car.fullCharacteristics && (
+                        <>
+                          <h4 className='descreptionText'>{car.fullCharacteristics.bodyType}</h4>
+                          <div className='descreptionicon'></div>
+                          <h4 className='descreptionText'>{car.fullCharacteristics.engineType}</h4>
+                          <div className='descreptionicon'></div>
+                          <h4 className='descreptionText'>{car.fullCharacteristics.transmission}</h4>
+                        </>
+                      )}
+                    </div>
+                    <div className='priceBut'>
+                      <div className='price'>
+                        <h2>{car.price}</h2>
+                      </div>
+                      <div className='but'>
+                        <button onClick={() => setSelectedCar(car)}>Подробнее</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </SwiperSlide>
             ))}

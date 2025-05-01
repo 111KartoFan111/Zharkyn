@@ -3,7 +3,7 @@ import React from 'react'
 const Logo = () => {
   return (
     <div className='logo'>
-      <img src="./img/Logo.svg" alt="" />
+      <img src="../../public/img/logo.svg" alt="" />
     </div>
   )
 }

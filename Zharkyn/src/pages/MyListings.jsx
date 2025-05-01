@@ -70,19 +70,19 @@ const MyListings = ({ user, onLogout }) => {
   };
 
   return (
-    <>
+    <div className='PtofileL'>
       <Header user={user} onLogout={onLogout} />
-      <div className="my-listings-container">
+      <div className="my-blogs-container">
         <div className="page-header">
           <h1>Мои объявления</h1>
-          <Link to="/add-listing" className="create-listing-button">
+          <Link to="/add-listing" className="create-blog-button">
             <span>+</span> Создать новое объявление
           </Link>
         </div>
 
         {error && <div className="error-message">{error}</div>}
 
-        <div className="listing-tabs">
+        <div className="blog-tabs">
           <button
             className={`tab-button ${activeTab === 'all' ? 'active' : ''}`}
             onClick={() => setActiveTab('all')}
@@ -112,29 +112,29 @@ const MyListings = ({ user, onLogout }) => {
         {loading ? (
           <div className="loading-spinner">Загрузка объявлений...</div>
         ) : listings.length === 0 ? (
-          <div className="empty-listings">
+          <div className="empty-blogs">
             <h3>У вас пока нет объявлений</h3>
             <p>Создайте свое первое объявление, чтобы продать автомобиль</p>
-            <Link to="/add-listing" className="create-first-listing-button">
+            <Link to="/add-listing" className="create-first-blog-button">
               Создать первое объявление
             </Link>
           </div>
         ) : (
-          <div className="listings-grid">
+          <div className="blogs-grid">
             {listings.map(listing => (
-              <div key={listing.id} className={`listing-card ${listing.status}`}>
-                <div className="listing-image">
+              <div key={listing.id} className={`blog-card ${listing.status}`}>
+                <div className="blog-image">
                   <img src={listing.image} alt={`${listing.brand} ${listing.model}`} />
-                  <div className={`listing-status ${listing.status}`}>
+                  <div className={`blog-status ${listing.status}`}>
                     {getListingStatusLabel(listing.status)}
                   </div>
                 </div>
-                <div className="listing-content">
-                  <h3 className="listing-title">{listing.brand} {listing.model}</h3>
-                  <p className="listing-description">{listing.short_description}</p>
-                  <div className="listing-meta">
-                    <span className="listing-price">{listing.price}</span>
-                    <span className="listing-year">{listing.year}</span>
+                <div className="blog-content">
+                  <h3 className="blog-title">{listing.brand} {listing.model}</h3>
+                  <p className="blog-description">{listing.short_description}</p>
+                  <div className="blog-meta">
+                    <span className="blog-price">{listing.price}</span>
+                    <span className="blog-year">{listing.year}</span>
                   </div>
                   {listing.status === 'rejected' && listing.moderator_comment && (
                     <div className="rejection-reason">
@@ -142,7 +142,7 @@ const MyListings = ({ user, onLogout }) => {
                     </div>
                   )}
                 </div>
-                <div className="listing-actions">
+                <div className="blog-actions">
                   {listing.status === 'approved' && (
                     <Link to={`/car/${listing.id}`} className="view-button">
                       Просмотр
@@ -169,7 +169,7 @@ const MyListings = ({ user, onLogout }) => {
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

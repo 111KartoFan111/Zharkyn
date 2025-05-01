@@ -63,18 +63,8 @@ const Header = ({ user, onLogout }) => {
               </Link>
             </li>
             <li>
-              <Link className="active" to="/#calculator" onClick={() => setMenuOpen(false)}>
-                Калькулятор
-              </Link>
-            </li>
-            <li>
               <Link className="active" to="/blogs" onClick={() => setMenuOpen(false)}>
                 Блог
-              </Link>
-            </li>
-            <li>
-              <Link className="active" to="#contact" onClick={() => setMenuOpen(false)}>
-                Связаться
               </Link>
             </li>
 
@@ -99,8 +89,8 @@ const Header = ({ user, onLogout }) => {
                   </Link>
                 </li>
                 <li>
-                  <Link className="active" to="/add-listing" onClick={() => setMenuOpen(false)}>
-                    Добавить объявление
+                  <Link className="active" to="/my-listings" onClick={() => setMenuOpen(false)}>
+                     Мои объявления
                   </Link>
                 </li>
                 <li>

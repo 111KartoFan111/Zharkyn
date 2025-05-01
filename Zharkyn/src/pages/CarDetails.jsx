@@ -156,7 +156,7 @@ const CarDetails = ({ user }) => {
   }
 
   return (
-    <>
+    <div className="PtofileL">
       <Header user={user} />
       <div className="car-details-container">
         <div className="car-details-header">
@@ -391,7 +391,7 @@ const CarDetails = ({ user }) => {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

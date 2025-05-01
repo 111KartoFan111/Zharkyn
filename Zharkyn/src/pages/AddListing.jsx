@@ -130,7 +130,7 @@ const AddListing = ({ user, onLogout }) => {
   };
 
   return (
-    <>
+    <div className='main'>
       <Header user={user} onLogout={onLogout} />
       <div className="add-listing-container">
         <h1>Создать объявление</h1>
@@ -417,7 +417,7 @@ const AddListing = ({ user, onLogout }) => {
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

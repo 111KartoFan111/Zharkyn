@@ -37,9 +37,7 @@ img{
   --color-header: #050B20;
 }
 .swiper-slide.swiper-slide-active{
-  width: max-content;
-  display: flex !important;
-  gap: 30px;
+  width: 350px !important;
 }
 .swiper-slide.swiper-slide-prev{
   display: flex !important;

@@ -907,6 +907,11 @@
     .blog-tabs,.admin-tabs {
       flex-direction: column;
     }
+    .page-header , .profile-header,.filter-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
     
     .blog-tab {
       width: 100%;

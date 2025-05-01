@@ -124,14 +124,10 @@ const Profile = ({ user, onLogout }) => {
   }
 
   return (
-    <>
+    <div className='PtofileL'>
       <Header user={user} onLogout={onLogout} />
       <div className="profile-container">
         <div className="profile-sidebar">
-          <div className="profile-avatar">
-            <img src="/img/default-avatar.png" alt="Avatar" />
-            <h3>{profileData.first_name} {profileData.last_name}</h3>
-          </div>
           <ul className="profile-nav">
             <li 
               className={activeTab === 'profile' ? 'active' : ''} 
@@ -334,7 +330,7 @@ const Profile = ({ user, onLogout }) => {
         </div>
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 

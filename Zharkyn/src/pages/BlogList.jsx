@@ -70,7 +70,7 @@ const BlogList = ({ user, onLogout }) => {
   };
 
   return (
-    <>
+    <div className='BlogList'>
       <Header user={user} onLogout={onLogout} />
       <div className="blog-list-container">
         <div className="page-header">
@@ -145,7 +145,7 @@ const BlogList = ({ user, onLogout }) => {
         )}
       </div>
       <Footer />
-    </>
+    </div>
   );
 };
 
