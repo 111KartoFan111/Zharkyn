@@ -45,6 +45,18 @@ const AdminBlogs = () => {
     }
   };
 
+  const HandleDeleteBlog = async (blogId) => {
+    if (window.confirm('Вы уверены, что хотите удалить этот блог?')) {
+      try {
+        await blogService.deleteBlog(blogId);
+        setBlogs(blogs.filter(blog => blog.id !== blogId));
+      } catch (err) {
+        console.error('Failed to delete blog:', err);
+        setError('Не удалось удалить блог. Пожалуйста, попробуйте позже.');
+      }
+    }
+  }
+
   if (loading && !selectedBlog && !showBlogRejectForm) {
     return <div className="loading">Загрузка...</div>;
   }
@@ -116,6 +128,12 @@ const AdminBlogs = () => {
                       onClick={() => setSelectedBlog(blog)}
                     >
                       Просмотр
+                    </button>
+                    <button
+                          className="delete-button"
+                          onClick={() => HandleDeleteBlog(blog.id, 'rejected')}
+                        >
+                          Удалить
                     </button>
                     
                     {blog.status === 'pending' && (

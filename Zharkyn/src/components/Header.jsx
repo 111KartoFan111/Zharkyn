@@ -28,7 +28,7 @@ const Header = ({ user, onLogout }) => {
           <Link className="active" to="#calculator">
             <li>Калькулятор</li>
           </Link>
-          <Link className="active" to="#blog">
+          <Link className="active" to="/blogs">
             <li>Блог</li>
           </Link>
           <Link className="active" to="#contact">

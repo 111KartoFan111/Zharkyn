@@ -6,7 +6,6 @@ import CarBrand from './CarBrand'
 import FeaturedMain from './FeaturedMain'
 import RecentlyAdded from './RecentlyAdded'
 import '../styles/Main.css'
-import ReviewsBlock from './ReviewsBlock'
 import CarBlog from './CarBlog'
 import AutoLoanCalculator from './AutoLoanCalculator'
 import Footer from './Footer.jsx'
@@ -48,7 +47,6 @@ const Main = () => {
       <CarBrand onBrandSelect={handleBrandSelect} selectedBrand={selectedBrand} />
       <FeaturedMain />
       <RecentlyAdded/>
-      <ReviewsBlock/>
       <CarBlog/>
       <AutoLoanCalculator />
       <Footer/>

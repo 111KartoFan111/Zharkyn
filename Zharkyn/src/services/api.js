@@ -175,7 +175,7 @@ const userService = {
   },
   
   getFavorites: async () => {
-    const response = await apiClient.get('/users/favorites');
+    const response = await apiClient.get('/users/me/favorites');
     return response.data;
   },
   

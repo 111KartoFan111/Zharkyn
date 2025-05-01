@@ -146,14 +146,7 @@ const MyBlogs = ({ user, onLogout }) => {
                     <Link to={`/blog/${blog.id}`} className="view-button">
                       Просмотр
                     </Link>
-                  )}
-                  {blog.status !== 'approved' && (
-                    <button 
-                      className="edit-button"
-                      onClick={() => navigate(`/edit-blog/${blog.id}`)}
-                    >
-                      Редактировать
-                    </button>
+                    
                   )}
                   <button 
                     className="delete-button"

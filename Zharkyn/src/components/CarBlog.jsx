@@ -1,45 +1,36 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Scrollbar, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
-import '../styles/Block/CarBlog.css'
-import blogData from '../blogData.json';
-
-// Пример реализации модального окна в проекте
-const BlogPostModal = ({ blog, onClose }) => {
-  if (!blog) return null;
-
-  return (
-    <div className="blog-modal-overlay" onClick={onClose}>
-      <div className="blog-modal-content" onClick={(e) => e.stopPropagation()}>
-        <button className="blog-modal-close" onClick={onClose}>×</button>
-        <div className="blog-modal-header">
-          <img src={blog.image} alt={blog.title} className="blog-modal-image" />
-          <div className="blog-modal-header-info">
-            <h2>{blog.title}</h2>
-            <p>{blog.shortDescription}</p>
-            <div className="blog-modal-meta">
-              <span>{blog.author}</span>
-              <div className="blog-modal-dot"></div>
-              <span>{blog.date}</span>
-              <div className="blog-modal-dot"></div>
-              <span>{blog.readTime}</span>
-            </div>
-          </div>
-        </div>
-        <div className="blog-modal-body">
-          <p>{blog.fullContent}</p>
-        </div>
-      </div>
-    </div>
-  );
-};
+import '../styles/Block/CarBlog.css';
+import { blogService } from '../services/api';
 
 const CarBlog = () => {
-  const [selectedBlog, setSelectedBlog] = useState(null);
+  const [blogs, setBlogs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchFeaturedBlogs = async () => {
+      setLoading(true);
+      try {
+        const featuredBlogs = await blogService.getFeaturedBlogs(4); // Fetch top 4 blogs by views
+        setBlogs(featuredBlogs);
+      } catch (err) {
+        console.error('Failed to fetch featured blogs:', err);
+        setError('Не удалось загрузить блоги');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchFeaturedBlogs();
+  }, []);
 
   return (
     <div id='blog' className='BlogBlock'>
@@ -47,38 +38,42 @@ const CarBlog = () => {
         <h2>Блог</h2>
       </div>
       <div className='Blog'>
-        <Swiper modules={[Navigation]} navigation={true} className="mySwiper">
-          <SwiperSlide>
-            <div className='BlogGap'>
-              {blogData.blogs.map((blog) => (
-                <div key={blog.id} className='BlogItem' onClick={() => setSelectedBlog(blog)}>
-                  <div className='BlogItemImg'>
-                    <img src={blog.image} alt={blog.title} />
+        {loading ? (
+          <div className="loading-spinner">Загрузка...</div>
+        ) : error ? (
+          <div className="error-message">{error}</div>
+        ) : blogs.length === 0 ? (
+          <div className="no-blogs-message">Нет доступных блогов</div>
+        ) : (
+          <Swiper modules={[Navigation]} navigation={true} className="mySwiper">
+            <SwiperSlide>
+              <div className='BlogGap'>
+                {blogs.map((blog) => (
+                  <div
+                    key={blog.id}
+                    className='BlogItem'
+                    onClick={() => navigate(`/blog/${blog.id}`)}
+                  >
+                    <div className='BlogItemImg'>
+                      <img src={blog.image} alt={blog.title} />
+                    </div>
+                    <div className='BlogItemTitle'>
+                      <p>{blog.author.username}</p>
+                      <div className='rectangle'></div>
+                      <p>{new Date(blog.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <div className='BlogItemText'>
+                      <h3>{blog.title}</h3>
+                    </div>
                   </div>
-                  <div className='BlogItemTitle'>
-                    <p>{blog.author}</p>
-                    <div className='rectangle'></div>
-                    <p>{blog.date}</p>
-                  </div>
-                  <div className='BlogItemText'>
-                    <h3>{blog.title}</h3>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </SwiperSlide>
-        </Swiper>
+                ))}
+              </div>
+            </SwiperSlide>
+          </Swiper>
+        )}
       </div>
-
-      {/* Blog Post Modal */}
-      {selectedBlog && (
-        <BlogPostModal 
-          blog={selectedBlog} 
-          onClose={() => setSelectedBlog(null)} 
-        />
-      )}
     </div>
-  )
-}
+  );
+};
 
-export default CarBlog
+export default CarBlog;

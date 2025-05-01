@@ -1,4 +1,3 @@
-// src/components/admin/AdminListings.jsx
 import React, { useState, useEffect } from 'react';
 import { carService } from '../../services/api';
 
@@ -41,6 +40,17 @@ const AdminListings = () => {
     } catch (error) {
       console.error('Failed to moderate listing:', error);
       setError('Не удалось обработать объявление. Пожалуйста, попробуйте еще раз.');
+    }
+  };
+
+  const HandleDeleteListing = async (listingId) => {
+    try {
+      await carService.deleteListing(listingId);
+      // Refresh the listings
+      fetchListings();
+    } catch (error) {
+      console.error('Failed to delete listing:', error);
+      setError('Не удалось удалить объявление. Пожалуйста, попробуйте еще раз.');
     }
   };
 
@@ -107,7 +117,7 @@ const AdminListings = () => {
                   <td>{new Date(listing.created_at).toLocaleDateString()}</td>
                   <td>
                     <span className={`status-badge ${listing.status}`}>
-                      {listing.status === 'pending' ? 'Ожидает' : 
+                      {listing.status === 'pending' ? 'Ожидает' :
                        listing.status === 'approved' ? 'Одобрено' : 'Отклонено'}
                     </span>
                   </td>
@@ -117,6 +127,12 @@ const AdminListings = () => {
                       onClick={() => setSelectedListing(listing)}
                     >
                       Просмотр
+                    </button>
+                    <button 
+                      className="delete-button"
+                      onClick={() => HandleDeleteListing(listing.id, 'rejected')}
+                    >
+                      Удалить
                     </button>
                     
                     {listing.status === 'pending' && (

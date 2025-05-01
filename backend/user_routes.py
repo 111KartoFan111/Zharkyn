@@ -143,7 +143,7 @@ async def remove_favorite(
     
     return None
 
-@router.get("/favorites", response_model=List[schemas.Car])
+@router.get("/me/favorites", response_model=List[schemas.Car])
 async def get_favorites(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(auth.get_current_active_user)

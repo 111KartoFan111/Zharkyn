@@ -13,7 +13,6 @@ import BlogList from './pages/BlogList.jsx';
 import BlogDetail from './pages/BlogDetail.jsx';
 import CreateBlog from './pages/CreateBlog.jsx';
 import MyBlogs from './pages/MyBlogs.jsx';
-import EditBlog from './pages/EditBlog.jsx';
 import ProtectedRoute from './components/ProtectedRoute';
 import { authService } from './services/api';
 import './App.css';
@@ -106,12 +105,6 @@ function App() {
             <CreateBlog user={user} onLogout={logout} />
           </ProtectedRoute>
         } />
-        <Route path="/edit-blog/:id" element={
-          <ProtectedRoute isAuthenticated={isAuthenticated}>
-            <EditBlog user={user} onLogout={logout} />
-          </ProtectedRoute>
-        } />
-        
         {/* Admin routes */}
         <Route path="/admin" element={
           <ProtectedRoute isAuthenticated={isAuthenticated} requiredRole="admin" user={user}>
