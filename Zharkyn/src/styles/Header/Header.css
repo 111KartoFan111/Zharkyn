@@ -4,6 +4,14 @@
     padding-top: 40px;
     padding-right: 100px;
 }
+@media screen and (max-width: 1024px) {
+    .BlogList ,.PtofileL  {
+        padding-left: 0px;
+        padding-top: 0px;
+        padding-right: 0px;
+    }
+  
+}
 
 .header {
     display: flex;

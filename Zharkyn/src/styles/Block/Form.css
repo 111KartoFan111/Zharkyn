@@ -158,6 +158,13 @@
     gap: 20px;
     margin-bottom: 20px;
   }
+  @media screen and (max-width: 1024px) {
+    .car-filter-container {
+      padding: 30px 20px 34px 20px;
+      width: 100%;
+    }
+    
+  }
   
   .tab-container {
     width: 100%;
