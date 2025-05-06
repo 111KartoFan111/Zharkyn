@@ -1,4 +1,3 @@
-// src/pages/SearchResults.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -14,16 +13,17 @@ const SearchResults = ({ user, onLogout }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Try to get results from localStorage first (set by Form.jsx)
-    const storedResults = localStorage.getItem('searchResults');
+    // Получаем фильтры из localStorage
     const storedFilters = localStorage.getItem('searchFilters');
     
-    if (storedResults && storedFilters) {
-      setResults(JSON.parse(storedResults));
-      setFilters(JSON.parse(storedFilters));
-      setLoading(false);
+    if (storedFilters) {
+      const parsedFilters = JSON.parse(storedFilters);
+      setFilters(parsedFilters);
+      
+      // Выполняем поиск с полученными фильтрами
+      fetchResults(parsedFilters);
     } else {
-      // If no stored results, try to fetch with empty filters
+      // Если фильтров нет, используем пустой объект
       fetchResults({});
     }
   }, []);
@@ -33,11 +33,14 @@ const SearchResults = ({ user, onLogout }) => {
     setError('');
     
     try {
+      console.log('Поиск с фильтрами:', filterData);
       const data = await carService.searchCars(filterData);
       setResults(data);
-      setFilters(filterData);
+      
+      // Сохраняем результаты в localStorage на случай навигации назад
+      localStorage.setItem('searchResults', JSON.stringify(data));
     } catch (err) {
-      console.error('Failed to fetch search results', err);
+      console.error('Не удалось получить результаты поиска:', err);
       setError('Не удалось получить результаты поиска. Пожалуйста, попробуйте позже.');
     } finally {
       setLoading(false);
@@ -56,7 +59,8 @@ const SearchResults = ({ user, onLogout }) => {
       mileage_from: 'Пробег от',
       mileage_to: 'Пробег до',
       engine_type: 'Тип двигателя',
-      transmission: 'Коробка передач'
+      transmission: 'Коробка передач',
+      body_type: 'Тип кузова'
     };
     
     const formatValue = (key, value) => {
@@ -73,7 +77,7 @@ const SearchResults = ({ user, onLogout }) => {
     };
     
     return Object.entries(filter)
-      .filter(([_, value]) => value) // Filter out empty values
+      .filter(([_, value]) => value) // Отфильтровываем пустые значения
       .map(([key, value]) => ({
         label: filterLabels[key] || key,
         value: formatValue(key, value)
@@ -98,6 +102,7 @@ const SearchResults = ({ user, onLogout }) => {
 
   return (
     <>
+    <div className="BlogList">
       <Header user={user} onLogout={onLogout} />
       <div className="search-results-container">
         <div className="search-results-header">
@@ -169,7 +174,7 @@ const SearchResults = ({ user, onLogout }) => {
                       )}
                     </div>
                     <p className="car-price">{car.price}</p>
-                    <p className="car-description">{car.short_description}</p>
+                    <p className="car-description">{car.shortDescription}</p>
                   </div>
                 </div>
               ))}
@@ -178,6 +183,7 @@ const SearchResults = ({ user, onLogout }) => {
         </div>
       </div>
       <Footer />
+    </div>
     </>
   );
 };

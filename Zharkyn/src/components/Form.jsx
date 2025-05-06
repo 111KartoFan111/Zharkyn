@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { carService } from '../services/api';
 import '../styles/Block/Form.css';
 
-const Form = () => {
+const Form = ({ showMore }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('new');
   const [formData, setFormData] = useState({
@@ -17,7 +17,14 @@ const Form = () => {
     mileageFrom: '',
     mileageTo: '',
     fuelType: '',
-    transmission: ''
+    transmission: '',
+    // Расширенные параметры фильтрации
+    color: '',
+    driveUnit: '',
+    engineVolume: '',
+    bodyType: '',
+    condition: '',
+    options: []
   });
   const [loading, setLoading] = useState(false);
 
@@ -52,6 +59,34 @@ const Form = () => {
     { value: 'variator', label: 'Вариатор' }
   ];
 
+  const bodyTypes = [
+    { value: '', label: 'Любой' },
+    { value: 'sedan', label: 'Седан' },
+    { value: 'hatchback', label: 'Хэтчбек' },
+    { value: 'suv', label: 'Кроссовер/Внедорожник' },
+    { value: 'coupe', label: 'Купе' },
+    { value: 'cabriolet', label: 'Кабриолет' },
+    { value: 'van', label: 'Минивэн' },
+    { value: 'truck', label: 'Пикап' }
+  ];
+
+  const conditions = [
+    { value: '', label: 'Любое' },
+    { value: 'excellent', label: 'Отличное' },
+    { value: 'good', label: 'Хорошее' },
+    { value: 'average', label: 'Среднее' },
+    { value: 'bad', label: 'Требует ремонта' }
+  ];
+
+  const carOptions = [
+    { value: 'leather', label: 'Кожаный салон' },
+    { value: 'navigation', label: 'Навигация' },
+    { value: 'sunroof', label: 'Люк' },
+    { value: 'climate', label: 'Климат-контроль' },
+    { value: 'camera', label: 'Камера заднего вида' },
+    { value: 'alloy', label: 'Легкосплавные диски' }
+  ];
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -60,46 +95,30 @@ const Form = () => {
     }));
   };
 
-  // Open in Kolesa.kz site
-  const handleExternalSearch = () => {
-    const baseUrl = 'https://kolesa.kz/cars/';
-    const searchParams = new URLSearchParams();
-
-    // Add price filter
-    if (formData.priceFrom) searchParams.append('price[from]', formData.priceFrom);
-    if (formData.priceTo) searchParams.append('price[to]', formData.priceTo);
+  const handleOptionChange = (option) => {
+    const updatedOptions = [...formData.options];
     
-    // Add year filter
-    if (formData.yearFrom) searchParams.append('year[from]', formData.yearFrom);
-    if (formData.yearTo) searchParams.append('year[to]', formData.yearTo);
+    if (updatedOptions.includes(option)) {
+      // Удаляем опцию, если она уже выбрана
+      const index = updatedOptions.indexOf(option);
+      updatedOptions.splice(index, 1);
+    } else {
+      // Добавляем опцию, если она ещё не выбрана
+      updatedOptions.push(option);
+    }
     
-    // Add mileage filter
-    if (formData.mileageFrom) searchParams.append('mileage[from]', formData.mileageFrom);
-    if (formData.mileageTo) searchParams.append('mileage[to]', formData.mileageTo);
-    
-    // Add fuel type filter
-    if (formData.fuelType) searchParams.append('auto-fuel', formData.fuelType);
-    
-    // Add transmission filter
-    if (formData.transmission) searchParams.append('auto-car-transm', formData.transmission);
-
-    const makeParams = [];
-    if (formData.make) makeParams.push(formData.make.toLowerCase());
-    if (formData.make && formData.model) makeParams.push(formData.model.toLowerCase().replace(' ', '-'));
-
-    const fullUrl = makeParams.length
-      ? `${baseUrl}${activeTab}/${makeParams.join('/')}/?${searchParams.toString()}`
-      : `${baseUrl}${activeTab}/?${searchParams.toString()}`;
-
-    window.open(fullUrl, '_blank');
+    setFormData(prev => ({
+      ...prev,
+      options: updatedOptions
+    }));
   };
 
-  // Search using the backend API
+  // Поиск с использованием внутреннего API
   const handleBackendSearch = async () => {
     setLoading(true);
     
     try {
-      // Convert form data to API filter format
+      // Конвертируем данные формы в формат API
       const filterData = {
         brand: formData.make || null,
         model: formData.model || null,
@@ -114,39 +133,33 @@ const Form = () => {
         transmission: formData.transmission || null
       };
       
-      // Remove null values to avoid validation errors
+      // Добавляем расширенные параметры, если они заполнены
+      if (formData.color) filterData.color = formData.color;
+      if (formData.driveUnit) filterData.drive_unit = formData.driveUnit;
+      if (formData.engineVolume) filterData.engine_volume = formData.engineVolume;
+      if (formData.bodyType) filterData.body_type = formData.bodyType;
+      if (formData.condition) filterData.condition = formData.condition;
+      if (formData.options.length > 0) filterData.options = formData.options;
+      
+      // Удаляем null значения
       Object.keys(filterData).forEach(key => {
         if (filterData[key] === null || filterData[key] === '') {
           delete filterData[key];
         }
       });
       
-      // Call the search API
-      const results = await carService.searchCars(filterData);
-      
-      // Store results in localStorage for the search results page
-      localStorage.setItem('searchResults', JSON.stringify(results));
+      // Сохраняем фильтры в localStorage
       localStorage.setItem('searchFilters', JSON.stringify(filterData));
       
-      // Navigate to search results page
+      // Очищаем результаты предыдущего поиска
+      localStorage.removeItem('searchResults');
+      
+      // Переходим на страницу результатов поиска
       navigate('/search');
     } catch (error) {
       console.error('Search failed:', error);
-      // Fallback to external search if backend fails
-      handleExternalSearch();
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleSearch = () => {
-    // Try backend search first (if backend is available)
-    // Otherwise fall back to external site
-    try {
-      handleBackendSearch();
-    } catch (error) {
-      console.error('Backend search failed, falling back to external search', error);
-      handleExternalSearch();
     }
   };
 
@@ -268,7 +281,9 @@ const Form = () => {
           </div>
         </div>
 
-        <div className="filter-row">
+        {showMore && (
+          <div className={`advanced-filters ${showMore ? 'show' : ''}`}>
+                    <div className="filter-row">
           <div className="input-group">
             <label>Пробег от (км)</label>
             <input
@@ -291,8 +306,7 @@ const Form = () => {
             />
           </div>
         </div>
-
-        <div className="filter-row">
+          <div className="filter-row">
           <div className="select-group">
             <label>Тип топлива</label>
             <select
@@ -320,9 +334,27 @@ const Form = () => {
           </div>
         </div>
 
+
+            <div className="filter-row">
+              <div className="select-group">
+                <label>Тип кузова</label>
+                <select
+                  name="bodyType"
+                  value={formData.bodyType}
+                  onChange={handleInputChange}
+                >
+                  {bodyTypes.map(option => (
+                    <option key={option.value} value={option.value}>{option.label}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
+        )}
+
         <button
           className="search-button"
-          onClick={handleSearch}
+          onClick={handleBackendSearch}
           disabled={loading}
         >
           {loading ? 'Поиск...' : 'Найти'}

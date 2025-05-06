@@ -2,7 +2,6 @@
 .AllBrand {
     display: flex;
     margin-top: 120px;
-    height: 185px;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -135,3 +134,185 @@
         line-height: 14px;
     }
 }
+/* Стили для компонента CarBrand */
+
+.AllBrand {
+    margin-bottom: 40px;
+    padding: 0 15px;
+  }
+  
+  .BrandTitle {
+    margin-bottom: 20px;
+  }
+  
+  .BrandTitle h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  /* Строка с брендами - горизонтальное отображение */
+  .BrandRow {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 15px;
+    padding: 10px 0;
+    margin-bottom: 10px;
+    scrollbar-width: thin;
+    -ms-overflow-style: none;
+  }
+  
+  .BrandRow::-webkit-scrollbar {
+    height: 6px;
+  }
+  
+  .BrandRow::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+  
+  .BrandRow::-webkit-scrollbar-thumb {
+    background: #ddd;
+    border-radius: 10px;
+  }
+  
+  .BrandRow::-webkit-scrollbar-thumb:hover {
+    background: #ccc;
+  }
+  
+  /* Стиль для дополнительной строки брендов */
+  .AdditionalRow {
+    margin-top: 20px;
+    animation: fadeIn 0.3s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Элемент бренда */
+  .BrandItem {
+    flex: 0 0 auto;
+    width: 140px;
+    height: 140px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    position: relative;
+  }
+  
+  .BrandItem:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .BrandItem.selected {
+    background-color: #f0f7ff;
+    border: 2px solid #3498db;
+    box-shadow: 0 5px 15px rgba(52, 152, 219, 0.2);
+  }
+  
+  .BrandItem.selected:after {
+    content: "✓";
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #3498db;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+  }
+  
+  .BrandImg {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-bottom: 10px;
+  }
+  
+  .BrandName {
+    font-size: 14px;
+    color: #333;
+    text-align: center;
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  /* Кнопка показать/скрыть */
+  .ShowMoreBrands {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .ShowMoreBrands button {
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    color: #333;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 8px 16px;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .ShowMoreBrands button:hover {
+    background-color: #eee;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Адаптивность */
+  @media (max-width: 768px) {
+    .BrandItem {
+      width: 120px;
+      height: 120px;
+    }
+    
+    .BrandImg {
+      width: 50px;
+      height: 50px;
+    }
+    
+    .BrandName {
+      font-size: 12px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .BrandItem {
+      width: 100px;
+      height: 100px;
+      padding: 10px;
+    }
+    
+    .BrandImg {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .BrandTitle h1 {
+      font-size: 24px;
+    }
+  }

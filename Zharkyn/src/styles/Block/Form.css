@@ -306,3 +306,125 @@
       flex-direction: column;
     }
   }
+
+  /* Добавьте эти стили в файл Filter.css */
+
+.filter-container {
+  position: relative;
+  width: 100%;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.show-more-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin-top: -10px;
+  margin-bottom: 25px;
+  position: relative;
+  z-index: 2;
+}
+
+.show-more-button {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 20px;
+  padding: 8px 20px;
+  font-size: 14px;
+  color: #4a4a4a;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  transition: all 0.2s ease;
+}
+
+.show-more-button:hover {
+  background-color: #f7f7f7;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.arrow-icon {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+}
+
+.arrow-icon.down {
+  border-top: 5px solid #4a4a4a;
+  border-bottom: 0;
+}
+
+.arrow-icon.up {
+  border-top: 0;
+  border-bottom: 5px solid #4a4a4a;
+}
+
+/* Стили для Form.css */
+
+.advanced-filters {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease-out, opacity 0.3s ease, margin 0.3s ease;
+  opacity: 0;
+  margin-top: 0;
+}
+
+.advanced-filters.show {
+  max-height: 500px; /* Задайте достаточно большое значение */
+  opacity: 1;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px dashed #e0e0e0;
+}
+
+.options-filter {
+  margin-top: 15px;
+}
+
+.options-label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 500;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+}
+
+.option-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.option-checkbox input[type="checkbox"] {
+  margin-right: 8px;
+}
+
+.option-checkbox label {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+  .options-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .options-grid {
+    grid-template-columns: 1fr;
+  }
+}

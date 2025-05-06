@@ -76,25 +76,34 @@ const carService = {
   },
   
   searchCars: async (filterData) => {
-    // Clean up filter data by removing empty strings and null values
-    const cleanFilterData = {};
+    // Адаптируем фильтры для API
+    const adaptedFilters = { ...filterData };
     
-    Object.keys(filterData).forEach(key => {
-      const value = filterData[key];
+    // Преобразование имен брендов для правильного поиска
+    if (adaptedFilters.brand) {
+      // Первая буква заглавная, остальные строчные
+      adaptedFilters.brand = adaptedFilters.brand.charAt(0).toUpperCase() + 
+                            adaptedFilters.brand.slice(1).toLowerCase();
+    }
+    
+    // Очищаем фильтры от пустых значений
+    const cleanFilterData = {};
+    Object.keys(adaptedFilters).forEach(key => {
+      const value = adaptedFilters[key];
       if (value !== null && value !== undefined && value !== '') {
         cleanFilterData[key] = value;
       }
     });
     
     try {
+      console.log('Поиск с фильтрами:', cleanFilterData);
       const response = await apiClient.post('/cars/search', cleanFilterData);
       return response.data;
     } catch (error) {
-      console.error('Search API error:', error);
+      console.error('Ошибка API поиска:', error);
       throw error;
     }
   },
-  
   // Listing management methods
   createListing: async (listingData) => {
     const response = await apiClient.post('/listings', listingData);

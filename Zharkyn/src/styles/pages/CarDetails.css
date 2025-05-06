@@ -3,6 +3,9 @@
     margin: 40px auto;
     padding: 20px;
     font-family: var(--font-dm);
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
   }
   
   .car-details-header {

@@ -435,12 +435,6 @@ const AdminCars = () => {
                 <td>{car.price}</td>
                 <td className="actions-cell">
                   <button 
-                    className="edit-button"
-                    onClick={() => handleEditCar(car)}
-                  >
-                    Редактировать
-                  </button>
-                  <button 
                     className="delete-button"
                     onClick={() => handleDeleteCar(car.id)}
                   >

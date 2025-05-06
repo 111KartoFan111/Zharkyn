@@ -11,8 +11,19 @@ const CarType = ({ onTypeSelect, selectedType }) => {
     { name: 'Кабриолет', image: './img/CarTypeImg/Convertible.svg', value: 'cabriolet' },
     { name: 'Минивэн', image: './img/CarTypeImg/Van.svg', value: 'van' },
     { name: 'Пикап', image: './img/CarTypeImg/Truck.svg', value: 'truck' },
-    { name: 'Электромобиль', image: './img/CarTypeImg/Electric.svg', value: '?auto-fuel=6' }
+    { name: 'Электромобиль', image: './img/CarTypeImg/Electric.svg', value: 'electric' }
   ]
+  
+  // Обработчик клика по типу автомобиля
+  const handleTypeClick = (type) => {
+    // Если тип уже выбран, снимаем выбор (устанавливаем пустое значение)
+    if (selectedType === type.value) {
+      onTypeSelect('');
+    } else {
+      // Иначе выбираем новый тип
+      onTypeSelect(type.value);
+    }
+  };
 
   return (
     <div className='AllType'>
@@ -24,7 +35,7 @@ const CarType = ({ onTypeSelect, selectedType }) => {
               <div
                 key={type.value}
                 className={`TypeItem ${selectedType === type.value ? 'selected' : ''}`}
-                onClick={() => onTypeSelect(type.value)}
+                onClick={() => handleTypeClick(type)}
               >
                   <img className='typeImg' src={type.image} alt={type.name} />
                   <h3>{type.name}</h3>
