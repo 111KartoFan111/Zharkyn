@@ -461,6 +461,7 @@
   .blog-title {
     margin: 0 0 10px 0;
     font-size: 18px;
+    word-break: break-all;
     color: #111827;
   }
   

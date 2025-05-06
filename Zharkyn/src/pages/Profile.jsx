@@ -111,6 +111,23 @@ const Profile = ({ user, onLogout }) => {
     }
   };
 
+  const handleEditReview = (reviewId) => {
+    // Заглушка для функции редактирования
+    console.log('Редактирование отзыва отключено');
+  };
+
+  const handleDeleteReview = async (reviewId) => {
+    if (window.confirm('Вы уверены, что хотите удалить этот отзыв?')) {
+      try {
+        await reviewService.deleteReview(reviewId);
+        setReviews(prev => prev.filter(review => review.id !== reviewId));
+      } catch (error) {
+        console.error('Failed to delete review', error);
+        setError('Не удалось удалить отзыв');
+      }
+    }
+  };
+
   if (loading && !profileData.username) {
     return (
       <>
@@ -293,7 +310,11 @@ const Profile = ({ user, onLogout }) => {
                   {reviews.map(review => (
                     <div key={review.id} className="review-card">
                       <div className="review-header">
-                        <h3>{review.car.brand} {review.car.model}</h3>
+                        <h3>
+                          <a href={`/car/${review.car_id}`}>
+                            {review.car ? `${review.car.brand} ${review.car.model}` : `Автомобиль #${review.car_id}`}
+                          </a>
+                        </h3>
                         <div className="review-rating">
                           {[...Array(5)].map((_, i) => (
                             <span 
@@ -309,14 +330,8 @@ const Profile = ({ user, onLogout }) => {
                       <p className="review-comment">{review.comment}</p>
                       <div className="review-actions">
                         <button 
-                          className="edit-review"
-                          onClick={() => {/* Implement edit review functionality */}}
-                        >
-                          Редактировать
-                        </button>
-                        <button 
                           className="delete-review"
-                          onClick={() => {/* Implement delete review functionality */}}
+                          onClick={() => handleDeleteReview(review.id)}
                         >
                           Удалить
                         </button>

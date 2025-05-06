@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List
+from sqlalchemy.orm import joinedload
 
 import schemas
 import models
@@ -28,9 +29,26 @@ async def read_user_reviews(
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(auth.get_current_active_user)
 ):
-    # Get reviews for current user
-    reviews = db.query(models.Review).filter(models.Review.user_id == current_user.id).all()
-    return reviews
+    """Get reviews from the current user with car information"""
+    try:
+        # Query reviews with joined car data
+        reviews = db.query(models.Review).filter(
+            models.Review.user_id == current_user.id
+        ).options(
+            joinedload(models.Review.car)  # Eager load car relationship
+        ).all()
+        
+        # Проверка на отсутствие машины в отзыве
+        for review in reviews:
+            if review.car_id is not None and review.car is None:
+                # Если car_id указан, но car не найден, установим car_id в None
+                review.car_id = None
+        
+        return reviews
+    except Exception as e:
+        # Логируем ошибку для отладки
+        print(f"Error fetching user reviews: {str(e)}")
+        raise
 
 @router.post("/", response_model=schemas.Review, status_code=status.HTTP_201_CREATED)
 async def create_review(

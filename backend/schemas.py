@@ -128,7 +128,7 @@ class CarFilter(BaseModel):
 
 # Review schemas
 class ReviewBase(BaseModel):
-    car_id: int
+    car_id: Optional[int] = None  # Делаем car_id опциональным
     rating: int
     comment: str
     
@@ -138,8 +138,16 @@ class ReviewBase(BaseModel):
             raise ValueError('Rating must be between 1 and 5')
         return v
 
-class ReviewCreate(ReviewBase):
-    pass
+class ReviewCreate(BaseModel):
+    car_id: int  # При создании отзыва car_id всегда обязательно
+    rating: int
+    comment: str
+    
+    @validator('rating')
+    def rating_must_be_valid(cls, v):
+        if v < 1 or v > 5:
+            raise ValueError('Rating must be between 1 and 5')
+        return v
 
 class ReviewUpdate(BaseModel):
     rating: Optional[int] = None
@@ -162,6 +170,7 @@ class ReviewInDB(ReviewBase):
 
 class Review(ReviewInDB):
     user: User
+    car: Optional[Car] = None
     
     class Config:
         orm_mode = True
